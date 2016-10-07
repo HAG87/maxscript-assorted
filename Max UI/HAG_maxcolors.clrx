@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ADSK_CLR>
+    <colorSchemeType type="0" />
+    <IconImageScales>
+        <appFrameColorTheme value="0" />
+        <enabledSatScale value="100.000000" />
+        <enabledValueScale value="100.000000" />
+        <enabledAlphaScale value="100.000000" />
+        <enabledContrastScale value="0.000000" />
+        <enabledGradientMapScale value="0.000000" />
+        <disabledSatScale value="0.000000" />
+        <disabledValueScale value="80.000000" />
+        <disabledAlphaScale value="100.000000" />
+        <disabledContrastScale value="0.000000" />
+        <disabledGradientMapScale value="0.000000" />
+        <enabledInvertImage value="0" />
+        <disabledInvertImage value="0" />
+    </IconImageScales>
+    <CustomColors>
+        <color colorID="0" ColorRef="5855577" name="Background" category="Appearance" />
+        <color colorID="1" ColorRef="10395294" name="Text" category="Appearance" />
+        <color colorID="4" ColorRef="14451260" name="Active Command" category="Appearance" />
+        <color colorID="5" ColorRef="3684408" name="3D Highlight" category="Appearance" />
+        <color colorID="6" ColorRef="3684408" name="3D Shadow" category="Appearance" />
+        <color colorID="7" ColorRef="5658198" name="Window" category="Appearance" />
+        <color colorID="8" ColorRef="3682082" name="Active Caption" category="Appearance" />
+        <color colorID="9" ColorRef="5623022" name="ToolTip Background" category="Appearance" />
+        <color colorID="10" ColorRef="0" name="ToolTip Text" category="Appearance" />
+        <color colorID="11" ColorRef="11711154" name="Highlight Text" category="Appearance" />
+        <color colorID="12" ColorRef="14474460" name="Window Text" category="Appearance" />
+        <color colorID="13" ColorRef="14446110" name="Item Highlight" category="Appearance" />
+        <color colorID="14" ColorRef="14451260" name="Modifier Sub-object Selection" category="Appearance" />
+        <color colorID="15" ColorRef="3355443" name="3D Dark Shadow" category="Appearance" />
+        <color colorID="16" ColorRef="3355443" name="3D Light" category="Appearance" />
+        <color colorID="17" ColorRef="11184810" name="App Workspace" category="Appearance" />
+        <color colorID="18" ColorRef="2763306" name="Trackbar Background" category="Trackbar" />
+        <color colorID="19" ColorRef="5719605" name="Trackbar Selected Background" category="Trackbar" />
+        <color colorID="20" ColorRef="12369084" name="Trackbar Text" category="Trackbar" />
+        <color colorID="21" ColorRef="6579300" name="Trackbar Ticks" category="Trackbar" />
+        <color colorID="22" ColorRef="0" name="Keys: Unknown" category="Trackbar" />
+        <color colorID="23" ColorRef="16777215" name="Keys: Selected" category="Trackbar" />
+        <color colorID="24" ColorRef="1239805" name="Trackbar Cursor" category="Trackbar" />
+        <color colorID="25" ColorRef="14451260" name="Pressed Buttons" category="Appearance" />
+        <color colorID="26" ColorRef="4473924" name="Time slider Background" category="Appearance" />
+        <color colorID="27" ColorRef="3289650" name="Viewport Border" category="Viewports" />
+        <color colorID="28" ColorRef="1973790" name="Viewport Active Border" category="Viewports" />
+        <color colorID="29" ColorRef="4079166" name="Roll-out Title Background" category="Roll-outs" />
+        <color colorID="30" ColorRef="15461355" name="Roll-out Title Text" category="Roll-outs" />
+        <color colorID="31" ColorRef="6579300" name="Roll-out Title Highlight" category="Roll-outs" />
+        <color colorID="32" ColorRef="6579300" name="Roll-out Title Shadow" category="Roll-outs" />
+        <color colorID="33" ColorRef="0" name="Selection Rubber Band" category="Appearance" />
+        <color colorID="34" ColorRef="4473924" name="Modifier Selection" category="Appearance" />
+        <color colorID="35" ColorRef="4605510" name="ImageViewer Background" category="ActiveShade" />
+        <color colorID="36" ColorRef="131790" name="ActiveShade Progress (Horizontal)" category="ActiveShade" />
+        <color colorID="37" ColorRef="173077" name="ActiveShade Progress (Vertical)" category="ActiveShade" />
+        <color colorID="38" ColorRef="14451260" name="Pressed Hierarchy Button" category="Appearance" />
+        <color colorID="39" ColorRef="4144959" name="Track View Background" category="Track View" />
+        <color colorID="40" ColorRef="3684408" name="Track View Inactive Background" category="Track View" />
+        <color colorID="41" ColorRef="57600" name="Active Manipulators" category="Manipulators" />
+        <color colorID="42" ColorRef="255" name="Selected Manipulators" category="Manipulators" />
+        <color colorID="43" ColorRef="57855" name="Inactive Manipulators" category="Manipulators" />
+        <color colorID="44" ColorRef="3421366" name="Function Curves: X" category="Track View" />
+        <color colorID="45" ColorRef="3249201" name="Function Curves: Y" category="Track View" />
+        <color colorID="46" ColorRef="16734017" name="Function Curves: Z" category="Track View" />
+        <color colorID="47" ColorRef="51400" name="Function Curves: W" category="Track View" />
+        <color colorID="48" ColorRef="13157938" name="Function Curves: Float" category="Track View" />
+        <color colorID="49" ColorRef="16777215" name="Function Curves: Selected" category="Track View" />
+        <color colorID="50" ColorRef="14474460" name="Track Text" category="Track View" />
+        <color colorID="51" ColorRef="7966351" name="Time: Selected Instant" category="Track View" />
+        <color colorID="52" ColorRef="65535" name="Keys: Cursor" category="Track View" />
+        <color colorID="53" ColorRef="5460819" name="Selected Track Background" category="Track View" />
+        <color colorID="54" ColorRef="4408131" name="Track Bar: Disabled" category="Track View" />
+        <color colorID="55" ColorRef="4605510" name="Track Bar End: Disabled" category="Track View" />
+        <color colorID="56" ColorRef="1513239" name="Track Bar: Enabled" category="Track View" />
+        <color colorID="57" ColorRef="9408399" name="Track Bar End: Enabled" category="Track View" />
+        <color colorID="58" ColorRef="2340042" name="Time: Slider Line" category="Track View" />
+        <color colorID="59" ColorRef="3421236" name="Time: Grid" category="Track View" />
+        <color colorID="60" ColorRef="8421504" name="Keys: Unknown" category="Track View" />
+        <color colorID="61" ColorRef="16449279" name="Keys: Selected" category="Track View" />
+        <color colorID="62" ColorRef="2763306" name="Keys: Outline" category="Track View" />
+        <color colorID="63" ColorRef="11513775" name="Keys: On Top Outline" category="Track View" />
+        <color colorID="64" ColorRef="10223861" name="Show Dependencies" category="Viewports" />
+        <color colorID="65" ColorRef="7836928" name="Sound Track: Right Channel" category="Track View" />
+        <color colorID="66" ColorRef="4269468" name="Sound Track: Left Channel" category="Track View" />
+        <color colorID="67" ColorRef="255" name="Assembly Object" category="Objects" />
+        <color colorID="68" ColorRef="129" name="Keys: Position" category="Track View" />
+        <color colorID="69" ColorRef="31232" name="Keys: Rotation" category="Track View" />
+        <color colorID="70" ColorRef="12334903" name="Keys: Scale" category="Track View" />
+        <color colorID="71" ColorRef="8421504" name="Keys: Transform" category="Track View" />
+        <color colorID="72" ColorRef="8421504" name="Keys: Objects" category="Track View" />
+        <color colorID="73" ColorRef="8421504" name="Keys: Materials" category="Track View" />
+        <color colorID="74" ColorRef="0" name="Tangent Handles: Adjustable" category="Track View" />
+        <color colorID="75" ColorRef="16740207" name="Tangent Handles: Auto" category="Track View" />
+        <color colorID="76" ColorRef="5855577" name="Keys: Mixed" category="Track View" />
+        <color colorID="77" ColorRef="12829635" name="Keys: Fake" category="Track View" />
+        <color colorID="79" ColorRef="163" name="Keys: Position" category="Trackbar" />
+        <color colorID="80" ColorRef="31232" name="Keys: Rotation" category="Trackbar" />
+        <color colorID="81" ColorRef="13172736" name="Keys: Scale" category="Trackbar" />
+        <color colorID="82" ColorRef="0" name="Keys: Transform" category="Trackbar" />
+        <color colorID="83" ColorRef="0" name="Keys: Objects" category="Trackbar" />
+        <color colorID="84" ColorRef="0" name="Keys: Materials" category="Trackbar" />
+        <color colorID="85" ColorRef="0" name="Keys: Mixed" category="Trackbar" />
+        <color colorID="86" ColorRef="3303350" name="Scale Value Origin" category="Track View" />
+        <color colorID="87" ColorRef="16777215" name="Keys: Function Curve Selected" category="Track View" />
+        <color colorID="88" ColorRef="7960953" name="Keys: Function Curve Unselected" category="Track View" />
+        <color colorID="89" ColorRef="16711680" name="Out of Range: Low" category="Material Editor" />
+        <color colorID="90" ColorRef="255" name="Out of Range: High" category="Material Editor" />
+        <color colorID="91" ColorRef="12033952" name="Scale Value Origin" category="Track View" />
+        <color colorID="92" ColorRef="15192787" name="Scale Value Origin" category="Track View" />
+        <color colorID="93" ColorRef="16777011" name="Adaptive Degradation Active" category="Appearance" />
+        <color colorID="94" ColorRef="0" name="Controller Window Toggle" category="Track View" />
+        <color colorID="95" ColorRef="657930" name="Region Select: Border" category="Track View" />
+        <color colorID="96" ColorRef="16448250" name="Region Select: Grip" category="Track View" />
+        <color colorID="97" ColorRef="13158600" name="Region Select: Region" category="Track View" />
+        <color colorID="98" ColorRef="9868950" name="Region Select: Outer Region" category="Track View" />
+        <color colorID="99" ColorRef="60395" name="Retime Tool: Marker" category="Track View" />
+        <color colorID="100" ColorRef="55255" name="Retime Tool: Marker Handle" category="Track View" />
+        <color colorID="101" ColorRef="8911610" name="Retime Tool: Marker/Handle Mouse Over" category="Track View" />
+        <color colorID="102" ColorRef="10857133" name="Retime Tool: Marker/Handle Selected" category="Track View" />
+        <color colorID="103" ColorRef="16777215" name="Retime Tool: Marker/Handle Selected Mouse Over" category="Track View" />
+        <color colorID="104" ColorRef="4144959" name="" category="Track View" />
+        <color colorID="105" ColorRef="2894892" name="Viewport Gradient Background Top" category="Viewports" />
+        <color colorID="106" ColorRef="6250324" name="Viewport Gradient Background Bottom" category="Viewports" />
+        <color colorID="107" ColorRef="65280" name="Trackbar Cached Line" category="Trackbar" />
+        <color colorID="108" ColorRef="65535" name="Trackbar Cache Line" category="Trackbar" />
+        <color colorID="109" ColorRef="65535" name="Preview Highlights" category="Viewports" />
+        <color colorID="110" ColorRef="16757248" name="Selection Highlights" category="Viewports" />
+        <color colorID="17320" ColorRef="16777215" name="Selection" category="Geometry" />
+        <color colorID="17321" ColorRef="208" name="Subselection" category="Geometry" />
+        <color colorID="17322" ColorRef="7895160" name="Freeze" category="Geometry" />
+        <color colorID="17323" ColorRef="0" name="Grid" category="No Category" />
+        <color colorID="17324" ColorRef="6908265" name="GridIntensity" category="No Category" />
+        <color colorID="17325" ColorRef="49344" name="Safeframe Live" category="Viewports" />
+        <color colorID="17326" ColorRef="14145280" name="Safeframe Action" category="Viewports" />
+        <color colorID="17327" ColorRef="38600" name="Safeframe Title" category="Viewports" />
+        <color colorID="17328" ColorRef="10197586" name="Viewport Label" category="Viewports" />
+        <color colorID="17329" ColorRef="3947580" name="Inactive Viewport Label" category="Viewports" />
+        <color colorID="17330" ColorRef="5623022" name="Arcball" category="Viewports" />
+        <color colorID="17331" ColorRef="12632256" name="Arcball Highlight" category="Viewports" />
+        <color colorID="17332" ColorRef="143" name="Auto Key Button" category="Appearance" />
+        <color colorID="17333" ColorRef="16777215" name="Selection Handles" category="No Category" />
+        <color colorID="17334" ColorRef="7208938" name="Link Lines" category="Gizmos" />
+        <color colorID="17335" ColorRef="250" name="Trajectory" category="Gizmos" />
+        <color colorID="17336" ColorRef="2302920" name="Active Axis" category="Gizmos" />
+        <color colorID="17337" ColorRef="6710886" name="Inactive Axis" category="Gizmos" />
+        <color colorID="17338" ColorRef="11167912" name="Space Warp" category="Objects" />
+        <color colorID="17339" ColorRef="196366" name="Dummy Object" category="Objects" />
+        <color colorID="17340" ColorRef="196366" name="Point Object" category="Objects" />
+        <color colorID="17341" ColorRef="14013909" name="Point Axis" category="Objects" />
+        <color colorID="17342" ColorRef="196366" name="Tape Object" category="Objects" />
+        <color colorID="17343" ColorRef="13351598" name="Bones" category="Objects" />
+        <color colorID="17344" ColorRef="38397" name="Gizmos" category="Gizmos" />
+        <color colorID="17345" ColorRef="4638920" name="Selected Gizmos" category="Gizmos" />
+        <color colorID="17346" ColorRef="707823" name="Spline Vectors" category="Geometry" />
+        <color colorID="17347" ColorRef="779264" name="Spline Handles" category="Geometry" />
+        <color colorID="17349" ColorRef="34025" name="Particle Emitter" category="Gizmos" />
+        <color colorID="17350" ColorRef="13400151" name="Camera Object" category="Objects" />
+        <color colorID="17351" ColorRef="15060121" name="Camera Cone" category="Gizmos" />
+        <color colorID="17352" ColorRef="0" name="Camera Horizon" category="Gizmos" />
+        <color colorID="17353" ColorRef="10079461" name="Camera Near Range" category="Gizmos" />
+        <color colorID="17354" ColorRef="5006962" name="Camera Far Range" category="Gizmos" />
+        <color colorID="17355" ColorRef="58879" name="Light Object" category="Objects" />
+        <color colorID="17356" ColorRef="16561228" name="Target Line" category="Gizmos" />
+        <color colorID="17357" ColorRef="3128015" name="Light Hotspot" category="Gizmos" />
+        <color colorID="17358" ColorRef="3111814" name="Light Falloff" category="Gizmos" />
+        <color colorID="17359" ColorRef="6506013" name="Light Far Range Start" category="Gizmos" />
+        <color colorID="17360" ColorRef="8414784" name="Light Far Range End" category="Gizmos" />
+        <color colorID="17361" ColorRef="3684408" name="Viewport Background" category="Viewports" />
+        <color colorID="17362" ColorRef="16777215" name="Trajectory Frames 1" category="Gizmos" />
+        <color colorID="17363" ColorRef="255" name="Trajectory Frames 2" category="Gizmos" />
+        <color colorID="17364" ColorRef="5000268" name="Trajectory Frames 3" category="Gizmos" />
+        <color colorID="17365" ColorRef="8353574" name="Ghost (Before)" category="Geometry" />
+        <color colorID="17366" ColorRef="2522999" name="Ghost (After)" category="Geometry" />
+        <color colorID="17367" ColorRef="13402060" name="12-Field Grid" category="Viewports" />
+        <color colorID="17368" ColorRef="9789244" name="Light Near Range Start" category="Gizmos" />
+        <color colorID="17369" ColorRef="14844739" name="Light Near Range End" category="Gizmos" />
+        <color colorID="17370" ColorRef="3355621" name="Camera Clipping" category="Gizmos" />
+        <color colorID="17371" ColorRef="65280" name="NURBS Control Vertex" category="Geometry" />
+        <color colorID="17372" ColorRef="65535" name="NURBS Lattice" category="Geometry" />
+        <color colorID="17373" ColorRef="65280" name="NURBS Constrained Point" category="Geometry" />
+        <color colorID="17374" ColorRef="65280" name="NURBS Fit Point" category="Geometry" />
+        <color colorID="17375" ColorRef="65280" name="NURBS Dependent Object" category="Geometry" />
+        <color colorID="17376" ColorRef="45823" name="NURBS Error Object" category="Geometry" />
+        <color colorID="17377" ColorRef="16711680" name="NURBS Highlight" category="Geometry" />
+        <color colorID="17378" ColorRef="16724940" name="NURBS Fuse" category="Geometry" />
+        <color colorID="17379" ColorRef="13966326" name="End Effector" category="Gizmos" />
+        <color colorID="17380" ColorRef="14718563" name="End Effector String" category="Gizmos" />
+        <color colorID="17381" ColorRef="694009" name="Selected Joint Limits" category="Gizmos" />
+        <color colorID="17382" ColorRef="32728" name="Joint Limits" category="Gizmos" />
+        <color colorID="17383" ColorRef="5000447" name="Terminator" category="Gizmos" />
+        <color colorID="17384" ColorRef="16711935" name="Safeframe User" category="Viewports" />
+        <color colorID="17385" ColorRef="15750228" name="Vertex Ticks" category="Geometry" />
+        <color colorID="17386" ColorRef="6710886" name="See-Through" category="Geometry" />
+        <color colorID="17387" ColorRef="11698175" name="Group Object" category="Objects" />
+        <color colorID="17388" ColorRef="200" name="Transform Gizmo X" category="Gizmos" />
+        <color colorID="17389" ColorRef="39936" name="Transform Gizmo Y" category="Gizmos" />
+        <color colorID="17390" ColorRef="12779520" name="Transform Gizmo Z" category="Gizmos" />
+        <color colorID="17391" ColorRef="65535" name="Active Transform Gizmo" category="Gizmos" />
+        <color colorID="17392" ColorRef="5623022" name="Viewport Clipping" category="Viewports" />
+        <color colorID="17393" ColorRef="9347840" name="Light Decay Start" category="Gizmos" />
+        <color colorID="17394" ColorRef="12" name="Vertex Numbers" category="Geometry" />
+        <color colorID="17395" ColorRef="14745825" name="Cross Hair Cursor" category="Viewports" />
+        <color colorID="17396" ColorRef="4144959" name="SV Window Bkg" category="Schematic View" />
+        <color colorID="17397" ColorRef="8355711" name="SV Node Bkg" category="Schematic View" />
+        <color colorID="17398" ColorRef="16777215" name="SV Selected Node Bkg" category="Schematic View" />
+        <color colorID="17399" ColorRef="16777215" name="SV Node Highlight" category="Schematic View" />
+        <color colorID="17400" ColorRef="16777215" name="SV Material Highlight" category="Schematic View" />
+        <color colorID="17401" ColorRef="16777215" name="SV Modifier Highlight" category="Schematic View" />
+        <color colorID="17402" ColorRef="255" name="SV Plugin Highlight" category="Schematic View" />
+        <color colorID="17403" ColorRef="255" name="SV Sub-Anim Line" category="Schematic View" />
+        <color colorID="17404" ColorRef="32512" name="SV Child Line" category="Schematic View" />
+        <color colorID="17405" ColorRef="0" name="SV Frame" category="Schematic View" />
+        <color colorID="17406" ColorRef="0" name="SV Selected Label" category="Schematic View" />
+        <color colorID="17407" ColorRef="0" name="SV Label" category="Schematic View" />
+        <color colorID="17408" ColorRef="5000268" name="Unselected Tabs" category="Appearance" />
+        <color colorID="17409" ColorRef="12365056" name="Atmospheric Apparatuses" category="Gizmos" />
+        <color colorID="17410" ColorRef="26367" name="SubSelection Hard" category="Geometry" />
+        <color colorID="17411" ColorRef="63231" name="SubSelection Medium" category="Geometry" />
+        <color colorID="17412" ColorRef="16711680" name="SubSelection Soft" category="Geometry" />
+        <color colorID="17413" ColorRef="6381921" name="SV Unfold Children Button" category="Schematic View" />
+        <color colorID="17414" ColorRef="16744319" name="SV Geometry Node Bkg" category="Schematic View" />
+        <color colorID="17415" ColorRef="58879" name="SV Light Node Bkg" category="Schematic View" />
+        <color colorID="17416" ColorRef="13400151" name="SV Camera Node Bkg" category="Schematic View" />
+        <color colorID="17417" ColorRef="16776960" name="SV Shape Node Bkg" category="Schematic View" />
+        <color colorID="17418" ColorRef="4194120" name="SV Helper Node Bkg" category="Schematic View" />
+        <color colorID="17419" ColorRef="8388543" name="SV System Node Bkg" category="Schematic View" />
+        <color colorID="17420" ColorRef="8355839" name="SV Controller Node Bkg" category="Schematic View" />
+        <color colorID="17421" ColorRef="3851752" name="SV Modifier Node Bkg" category="Schematic View" />
+        <color colorID="17422" ColorRef="7380653" name="SV Material Node Bkg" category="Schematic View" />
+        <color colorID="17423" ColorRef="5878621" name="SV Map Node Bkg" category="Schematic View" />
+        <color colorID="17424" ColorRef="173" name="Set Key Mode" category="Appearance" />
+        <color colorID="17425" ColorRef="6710886" name="Back Face Lines" category="Geometry" />
+        <color colorID="17426" ColorRef="6684672" name="Back Face Vertex Ticks" category="Geometry" />
+        <color colorID="17427" ColorRef="6513507" name="Rotation Gizmo Contour" category="Gizmos" />
+        <color colorID="17428" ColorRef="11184810" name="Screen Space Gizmo" category="Gizmos" />
+        <color colorID="17429" ColorRef="5855577" name="Move Gizmo Trail" category="Gizmos" />
+        <color colorID="17430" ColorRef="13369344" name="Normals - Unspecified" category="Geometry" />
+        <color colorID="17431" ColorRef="13421568" name="Normals - Specified" category="Geometry" />
+        <color colorID="17432" ColorRef="52224" name="Normals - Explicit" category="Geometry" />
+        <color colorID="17433" ColorRef="3421236" name="SV Grid Color" category="Schematic View" />
+        <color colorID="17434" ColorRef="16744319" name="SV Rel Instance" category="Schematic View" />
+        <color colorID="17435" ColorRef="8355839" name="SV Rel Constraint" category="Schematic View" />
+        <color colorID="17436" ColorRef="16711935" name="SV Rel Param Wire" category="Schematic View" />
+        <color colorID="17437" ColorRef="4194120" name="SV Rel Light" category="Schematic View" />
+        <color colorID="17438" ColorRef="3851752" name="SV Rel Modifier" category="Schematic View" />
+        <color colorID="17439" ColorRef="8355839" name="SV Rel Controller" category="Schematic View" />
+        <color colorID="17440" ColorRef="65280" name="SV Rel Other" category="Schematic View" />
+        <color colorID="17441" ColorRef="8330620" name="SV Spacewarp Bkg" category="Schematic View" />
+        <color colorID="17442" ColorRef="6872812" name="SV Base Object Bkg" category="Schematic View" />
+        <color colorID="17443" ColorRef="1690853" name="Statistics" category="Viewports" />
+        <color colorID="17444" ColorRef="16777215" name="Spline Knots Unselected" category="Geometry" />
+        <color colorID="17445" ColorRef="65532" name="Spline Knots First" category="Geometry" />
+        <color colorID="17446" ColorRef="8421504" name="Hidden Line Unselected" category="Viewports" />
+        <color colorID="17447" ColorRef="1690853" name="Viewport Label Highlight" category="Viewports" />
+        <color colorID="17448" ColorRef="11184810" name="Snap Axis Center Handle" category="Snaps" />
+        <color colorID="17449" ColorRef="65535" name="Snap Point Active" category="Snaps" />
+        <color colorID="17450" ColorRef="65280" name="Snap Point Snapped" category="Snaps" />
+        <color colorID="657632" ColorRef="16777215" name="Layer Highlight Foreground" category="Scene Explorer" />
+        <color colorID="657633" ColorRef="16667399" name="Layer Highlight Background" category="Scene Explorer" />
+        <color colorID="55791844" ColorRef="255" name="Subselection" category="Particle Flow" />
+        <color colorID="140135570" ColorRef="16389" name="Wire Color" category="Character" />
+        <color colorID="199427397" ColorRef="3663357" name="Test Gizmos" category="Particle Flow" />
+        <color colorID="324632263" ColorRef="6403315" name="Source Gizmos" category="Particle Flow" />
+        <color colorID="503128211" ColorRef="55794" name="HSDS Control Edge" category="Geometry" />
+        <color colorID="541346229" ColorRef="9794372" name="Operator Gizmos" category="Particle Flow" />
+        <color colorID="588931057" ColorRef="3947580" name="Node View Background" category="Node Views" />
+        <color colorID="914622688" ColorRef="16777215" name="Line Color" category="Unwrap Colors" />
+        <color colorID="914622689" ColorRef="255" name="Selection Color" category="Unwrap Colors" />
+        <color colorID="914622690" ColorRef="65280" name="Open Edge Color" category="Unwrap Colors" />
+        <color colorID="914622691" ColorRef="65535" name="Handle Color" category="Unwrap Colors" />
+        <color colorID="914622692" ColorRef="3302655" name="Transform Gizmo Color" category="Unwrap Colors" />
+        <color colorID="914622693" ColorRef="16711680" name="Shared Sub Objects Color" category="Unwrap Colors" />
+        <color colorID="914622694" ColorRef="7895160" name="Background Color" category="Unwrap Colors" />
+        <color colorID="914622695" ColorRef="9868950" name="Grid Color" category="Unwrap Colors" />
+        <color colorID="914622696" ColorRef="230" name="Geom. Edge Color" category="Unwrap Colors" />
+        <color colorID="914622697" ColorRef="230" name="Geom. Vertex Color" category="Unwrap Colors" />
+        <color colorID="914622704" ColorRef="16757261" name="Pelt Seam Color" category="Unwrap Colors" />
+        <color colorID="914622705" ColorRef="65280" name="Edge Distortion Color" category="Unwrap Colors" />
+        <color colorID="914622706" ColorRef="255" name="Edge Distortion Goal Color" category="Unwrap Colors" />
+        <color colorID="914622707" ColorRef="8421504" name="Checker Color 1" category="Unwrap Colors" />
+        <color colorID="914622708" ColorRef="16777215" name="Checker Color 2" category="Unwrap Colors" />
+        <color colorID="914627058" ColorRef="65280" name="Map Seam Color" category="UVW Map" />
+        <color colorID="981893113" ColorRef="16777215" name="HSDS Control Mesh" category="Geometry" />
+        <color colorID="1146357984" ColorRef="16777003" name="Mirror Reproject" category="3D Painter" />
+        <color colorID="1146357985" ColorRef="16777003" name="Normal Color" category="3D Painter" />
+        <color colorID="1146357986" ColorRef="255" name="Ring Pressed Color" category="3D Painter" />
+        <color colorID="1146357987" ColorRef="255" name="Normal Pressed Color" category="3D Painter" />
+        <color colorID="1146357988" ColorRef="255" name="Trace Color" category="3D Painter" />
+        <color colorID="1146357989" ColorRef="37628" name="Gizmo Color" category="3D Painter" />
+        <color colorID="1183058175" ColorRef="8421504" name="No Weight Color" category="Skin Colors" />
+        <color colorID="1244031133" ColorRef="7895160" name="Level Item Separator" category="HSDS Controls" />
+        <color colorID="1414099189" ColorRef="4276545" name="Node View Grid" category="Node Views" />
+        <color colorID="1466918928" ColorRef="255" name="Vertex Selected Color" category="VertexPaint" />
+        <color colorID="1466918929" ColorRef="255" name="Face Selected Color" category="VertexPaint" />
+        <color colorID="1466918930" ColorRef="16711680" name="Vertex Unselected Color" category="VertexPaint" />
+        <color colorID="1466918931" ColorRef="65535" name="Face Unselected Color" category="VertexPaint" />
+        <color colorID="1637973995" ColorRef="255" name="Current Level Item" category="HSDS Controls" />
+        <color colorID="1724273072" ColorRef="16448000" name="Displayed Level Item" category="HSDS Controls" />
+        <color colorID="1751060405" ColorRef="65280" name="Display Color" category="xView" />
+        <color colorID="1751060406" ColorRef="65280" name="Text Color" category="xView" />
+        <color colorID="1835527538" ColorRef="65535" name="Collision Shape" category="Particle Flow Tools" />
+        <color colorID="2084852526" ColorRef="11842740" name="Hidden Level Item" category="HSDS Controls" />
+        <color colorID="-832773846" ColorRef="16711680" name="Particle Bindings" category="Particle Flow Tools" />
+        <color colorID="-171339374" ColorRef="9794372" name="mP World Gizmo" category="Particle Flow Tools" />
+    </CustomColors>
+    <GridInfo gridIntensity="103" whiteOrigin="0" useGridColor="0" />
+</ADSK_CLR>
