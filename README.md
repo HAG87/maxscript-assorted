@@ -4,6 +4,7 @@
 ###Vertex scrambler
 ###Advanced user path manager
 ###Support scripts for DesignToolBox - refGuides
+###Some oher assorted scripts
 #MCG solutions
 ###HyperClone
 advanced cloning tool
