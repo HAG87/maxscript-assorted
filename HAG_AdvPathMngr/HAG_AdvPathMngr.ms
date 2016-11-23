@@ -1,6 +1,7 @@
 /*
 -------------------------------------------------------------------------------------------------------------------
-Advanced UserPaths Manager v 1.0
+Advanced UserPaths Manager
+11/2016 version 2.0
 HAG 2016
 ATTRIBUTION / NON COMERCIAL / SHARE ALIKE
 -------------------------------------------------------------------------------------------------------------------
@@ -22,28 +23,53 @@ macroScript HAG_AdvPathMngr
 		button btn_3 "Add" width:150 offset:[-160,0] align:#left
 		button btn_4 "Show Only Invalids" align:#right
 		imgTag sep1 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
+		button btn_7 "Remove ..." width:150 align:#left across:6
+		checkbox chk_1 "Empty folders" checked:true width:80 align:#right 
+		checkbox chk_2 "Not Images" width:80 align:#right
+		checkbox chk_3 "Not Models" width:80 align:#right
+		checkbox chk_4 "Other (specify):" align:#right
+		editText txt_1 text:"#(\".ies\",\".svg\")" align:#left	
+		imgTag sep2 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
 		button btn_5 "Done" width:150 height:30 offset:[320,0] align:#right across:2
 		button btn_6 "Cancel" width:150 height:30 align:#right
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local PathsCol = #()
 		local only_invalid = false
 		--
-		local marked_to_delete = #()
-		local marked_to_add = #()
-		local marked_to_change = #()
-		local marked_to_reorder = #()
+		local temp_paths = #()
+		local result_paths = #()
+		--	local marked_to_reorder = #()
+		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-- file extensions, add as needed
+		local img_ext = #(".jpg",".jpeg",".png",".tif",".tiff",".tga",".bmp",".exr",".gif")
+		local md_ext = #(".3ds",".max",".obj",".fbx",".iges",".dwg",".dxf",".rvt",".skp")
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local dotNetLstViewItemClass = dotNetClass "System.Windows.Forms.ListViewItem"
+		local dotNetLstViewClass = dotNetClass "System.Windows.Forms.ListView"
 		local dotNetColor = dotNetClass "System.Drawing.Color"
 		local dotNetFont = dotNetClass "System.Drawing.Font"
 		local font_underline = (dotNetClass "System.Drawing.FontStyle").Underline
 		local font_bold = (dotNetClass "System.Drawing.FontStyle").Bold
 		local font_strk = (dotNetClass "System.Drawing.FontStyle").Strikeout
+		local font_reg = (dotNetClass "System.Drawing.FontStyle").Regular
 		local folder_dialog = dotnetobject "FolderBrowserDialog"
 		local dotNetDirectory = dotnetclass "System.IO.Directory"
-
-		local font_strikeout
 		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-- Compare function used by bsearch:
+		fn extComparator a b =
+		(
+			if a > (toLower b) then 1
+			else if a < (toLower b) then -1
+			else 0
+		)
+		fn invSort a b =
+		(
+			case of (
+				(a > b):-1
+				(a < b):1
+				default:0
+			)
+		)
 		fn GetAllSubDirs MyDirectory =
 		(
 			local
@@ -62,6 +88,7 @@ macroScript HAG_AdvPathMngr
 			for i=1 to folders.count do (folders[i] = trimRight folders[i] "\\")
 			folders
 		)
+		----------------------------------------------------------------------------------------------------------------------------------------------------
 		fn lstV_addColumns lst itms autosize:false =
 		(
 			local HZ = (dotNetClass "HorizontalAlignment").Left
@@ -85,18 +112,24 @@ macroScript HAG_AdvPathMngr
 				lst.AutoResizeColumns (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize
 			)
 		)
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-- reaply style
+		fn lst_restyle =
+		(
+			local list_items = lst_mPath.Items
+			for f=0 to (list_items.count)-1 do (
+				list_items.Item[f].BackColor = if (bit.get f 1) then dotNetColor.Transparent else dotNetColor.LightGray
+			)
+		)
 		fn parse_items mP_list =
 		(
 			if mP_list != undefined then (
 				local ColrList = #()
-				ColrList[mP_list.count] = ""
-				
+				ColrList[mP_list.count] = ""				
 				local res_list = for i=1 to mP_list.count collect (
 					local itm = #()
 					itm[1] = pathConfig.stripPathToLeaf mP_list[i]
 					itm[2] = mP_list[i]
-					itm[3] = (getFiles (pathConfig.appendPath mP_list[i] "*.*")).count as string
+					itm[3] = (getFiles (pathConfig.appendPath mP_list[i] "*.*")).count as string						
 					if (dotNetDirectory.exists mP_list[i]) then (
 						itm[4] = "OK"
 						ColrList[i] = dotNetColor.seagreen
@@ -110,7 +143,6 @@ macroScript HAG_AdvPathMngr
 				#(res_list, ColrList)
 			) else undefined
 		)
-		
 		fn update_item the_item new_path =
 		(
 			local the_subitems = the_item.subitems
@@ -128,9 +160,11 @@ macroScript HAG_AdvPathMngr
 		)
 		fn Init =
 		(
-			local mP_n = mapPaths.count()
-			local mP_list = for i=1 to mP_n collect (mapPaths.get i)
-			local result_items = parse_items mP_list
+			temp_paths = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
+			result_paths = deepcopy temp_paths
+				
+			local result_items = parse_items temp_paths
+			
 			if result_items != undefined then (
 				lstV_addItem lst_mPath (result_items[1]) colorCol:(result_items[2])
 			)
@@ -138,13 +172,28 @@ macroScript HAG_AdvPathMngr
 		fn commit =
 		(
 			if queryBox "Commit changes ?" then (
-				if marked_to_delete != #() then (for d in marked_to_delete do (mapPaths.delete d))
-				if marked_to_change != #() then (
-					for f in marked_to_delete do (mapPaths.delete f)
-					for u in marked_to_change do (mapPaths.add u)
-				)
-				if marked_to_add != #() then (for a in marked_to_add do (mapPaths.add a))
 				
+				local o_count = temp_paths.count
+				local n_count = result_paths.count
+				-- delete Paths
+				progressStart "Removing user paths"
+				
+				for d=o_count to 1 by -1 do (
+					local del = findItem result_paths temp_paths[d]
+					if del == 0 then (
+						progressUpdate ( (o_count- d) * 100 / o_count)
+						mapPaths.delete d
+					--	format "% : %\n" d temp_paths[d]
+					)
+				)
+				progressEnd()
+				-- add paths 
+				for a=n_count to 1 by -1 do (
+					local _add = findItem temp_paths result_paths[a]
+					if _add == 0 then (
+					--	print result_paths[a]
+					)
+				)
 			)
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -189,8 +238,7 @@ macroScript HAG_AdvPathMngr
 			lst_mPath.Dispose()
 			gc()
 		)
-		----------------------------------------------------------------------------------------------------------------------------------------------------
-		-- Event handlers
+		---------------------------------------------------------------------------------------------------------------------------------------------------- Event handlers
 		-- change items
 		on btn_1 pressed do
 		(
@@ -200,7 +248,7 @@ macroScript HAG_AdvPathMngr
 			local itms_count = lst_mPath.SelectedItems.count
 			-- for each selected item...
 			lst_mPath.BeginUpdate()
-			for i=itms_count-1 to 0 by -1 do (
+			for i=(itms_count-1) to 0 by -1 do (
 				----
 				local the_item = itms[i]
 				----
@@ -208,80 +256,71 @@ macroScript HAG_AdvPathMngr
 				local new_path = folder_dialog.SelectedPath
 				if new_path != "" then (
 					the_item.Font = underline
+					-- delete old
+					local d = findItem result_paths (the_item.Subitems.Item[1])
+					if d != 0 then deleteItem result_paths d 
+					-- update listview
 					update_item the_item new_path
-					------ mark for deletion and mark for add...
-					append marked_to_delete the_item.Tag
-					append marked_to_change new_path
+					-- add new
+					append result_paths new_path
 				)
 			)
 			lst_mPath.EndUpdate()
 		)
-		-- Remove Items
+		-- Remove items		
 		on btn_2 pressed do
 		(
-			local delete_mode = false
 			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
+			local regular = dotNetObject dotNetFont (lst_mPath.Font) font_reg
 			
 			local itms = lst_mPath.SelectedItems.Item
-			--local itms = lst_mPath.SelectedIndices.Item
 			local itms_count = lst_mPath.SelectedItems.count
+			
+			local to_delete = #()
 			-- begin update
 			lst_mPath.BeginUpdate()
-			case delete_mode of (
-				true:
-				(
-					for i=itms_count-1 to 0 by -1 do (
-						local the_item = itms[i]
-						lst_mPath.Items.Remove(the_item)
-						append marked_to_delete the_item.Tag
-						/*
-						For i = 0 To ListView1.SelectedItems.Count - 1   ' This is evaluated only ONCE :)
-							MsgBox("Notice the updated count : " & ListView1.SelectedItems.Count.ToString)
-							MsgBox("Deleting item : " & ListView1.SelectedItems(0).Text)
-							ListView1.Items.RemoveAt(ListView1.SelectedItems(0).Index)
-						Next
-					--	*/
-					)
-					-- reapply items style
-					local list_items = lst_mPath.Items
-					for f=0 to (list_items.count)-1 do (
-						list_items.Item[f].BackColor = if (bit.get f 1) then dotNetColor.Transparent else dotNetColor.LightGray
-					)
-				)
-				false:
-				(
-					for i=itms_count-1 to 0 by -1 do (
-						local the_item = itms[i]
-						the_item.Font = strikeout
-						append marked_to_delete the_item.Tag
-					)
+			for i=itms_count-1 to 0 by -1 do (
+				local the_item = itms[i]
+				local item_tag = the_item.Tag
+				local item_path = the_item.Subitems.Item[1].Text
+				if (findItem result_paths item_path) != 0 then (
+					the_item.Font = strikeout
+					append to_delete item_tag
+				) else (
+					the_item.Font = regular
+					/*
+					local a = findItem temp_paths item_path
+					append result_paths temp_paths[a]
+					*/
+					append result_paths item_path
 				)
 			)
 			-- end update
 			lst_mPath.EndUpdate()
+			--Delete from temp results
+			qsort to_delete invSort
+			for i=1 to to_delete.count do (
+				deleteItem result_paths to_delete[i]
+			)
 		)
 		-- add items
-		on btn_3 pressed do (
+		on btn_3 pressed do
+		(
 			local res = folder_dialog.showDialog()
 			local the_path = folder_dialog.SelectedPath
 			if the_path != "" then (
-				-- add subfolders?
 				local the_paths = #(the_path)
 				if (queryBox "Add subfolders too?") then join the_paths (GetAllSubDirs the_path)
 				local result_items = parse_items the_paths
 				if result_items != undefined then (
 					lstV_addItem lst_mPath (result_items[1]) colorCol:(result_items[2]) font:(font_Bold)
-					-- mark for add
-					join marked_to_add the_paths
+					-- add to temp results
+					join result_paths the_paths
 				)
 			)
 		)
-
+		-- invalid paths filter
 		on btn_4 pressed do (
-			/*
-			local col_class = dotNetClass "System.Windows.Data.CollectionViewSource"
-			local col_obj = (dotNetObject col_class).GetDefaultView (lst_mPath.Items)
-			*/
 			if (not only_invalid) then (
 				only_invalid = not only_invalid
 				local items_col = lst_mPath.Items
@@ -291,14 +330,96 @@ macroScript HAG_AdvPathMngr
 					local the_item_sub = the_item.Subitems.Item[3]
 					local status = the_item_sub.text
 					if status == "OK" then ( items_col.Remove(the_item) )
-					
 				)
+				-- reapply style
 				lst_mPath.EndUpdate()
+			)
+		)
+		-- remove unwanted
+		on btn_7 pressed do
+		(
+			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
+			local items_col = lst_mPath.Items
+			/*
+			local file_paths =			
+					for i=0 to (items_col.count)-1 collect (
+						local the_item = items_col.Item[i]
+						local the_item_sub = the_item.Subitems.Item[1]
+						the_item_sub.text
+					)
+			*/	
+			-- collect filenames
+			local filenames =
+					for f=1 to result_paths.count collect (
+						local temp = getfiles (result_paths[f] + "\\*.*")
+						local ext = #()
+						if temp.count != 0 then (
+							-- collect ext and skip .db
+							for i=1 to temp.count do (
+								local fl = getFilenameType temp[i]
+								if fl != ".db" then append ext fl
+							)
+						)
+						ext
+					)
+			local marked = #()
+			for em=1 to filenames.count do (
+				local the_item = items_col.Item[em-1]
+				-- empty folders
+				if chk_1.checked then (					
+					if filenames[em].count == 0 then (append marked the_item)						
+				)					
+				-- not images
+				if chk_2.checked then (
+					local res = 0
+					local cnt = 1
+					do (
+						bsearch img_ext[cnt] filenames[em] extComparator index:&res
+						cnt += 1
+					) while ((cnt < img_ext.count) and (res == 0))
+					if res == 0 then ( append marked the_item )
+				)
+				-- not models
+				if chk_3.checked then (
+					local res_m = 0
+					local cnt_m = 1
+					do (
+						bsearch md_ext[cnt_m] filenames[em] extComparator index:&res_m
+						cnt_m += 1
+					) while ((cnt_m < md_ext.count) and (res_m == 0))
+					if res_m == 0 then (append marked the_item)
+				)
+				-- other
+				if chk_4.checked then (
+					local ext = execute txt_1.text
+					if isKindOf ext Array then (
+						local res = 0
+						local cnt = 1
+						do (
+							bsearch ext[cnt] filenames[em] extComparator index:&res
+							cnt += 1
+						) while ((cnt < ext.count) and (res == 0))
+						if res == 0 then ( append marked the_item )
+					)
+				)
+			)
+			-- process list
+			lst_mPath.BeginUpdate()
+			local to_delete = #()
+			for it in marked do (
+				it.Font = strikeout
+				append to_delete it.Tag
+			)
+			lst_mPath.EndUpdate()
+			qsort to_delete invSort
+			local pross = makeUniqueArray to_delete
+			for i=1 to pross.count do (
+				deleteItem result_paths pross[i]
 			)
 		)
 		-- accept
 		on btn_5 pressed do (commit(); DestroyDialog roll_mPath)
 		on btn_6 pressed do (DestroyDialog roll_mPath)
 	)
-		CreateDialog roll_mPath
+	CreateDialog roll_mPath
 )
