@@ -13,7 +13,9 @@ Tool for creating panel cuts reports. Useful for furniture or kitchen cabinets d
 ## Install notes
 
 1 - Copy scripts, usericons and usermacros to 3ds Max user folder. Normally located at: C:\Users\USER_NAME\AppData\Local\Autodesk\3dsMax\20XX - 64bit\ENU
+
 2- Restart Max if opened
+
 3 - Add the macro to a toolbar. It can be found under the category "HAG tools"
 
 ## Help / user guide
