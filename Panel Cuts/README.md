@@ -20,5 +20,5 @@ Tool for creating panel cuts reports. Useful for furniture or kitchen cabinets d
 
 ## Help / user guide
 
-please visit <http://atelierbump.tk> for online documentation.
+please visit [GitHub page](https://github.com/HAG87/other-documentation/blob/master/panel_cuts_user_guide.md) for online documentation.
 
