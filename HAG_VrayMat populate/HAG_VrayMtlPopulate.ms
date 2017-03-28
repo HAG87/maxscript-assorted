@@ -7,35 +7,38 @@
 	----------------------------------------------------------------------------------------------------------
 */
 (
-	struct vrayPop(
-		function setVraySlots rndColor:false chk:true=(
-			fn assignMat r id=(
-				local vraymat= vraymtl ()
-				local n= ("vrayMtl_"+ (floor(random 1 100) as integer )as String)
-				vraymat.name=n
-				if r== true then (
-					vraymat.diffuse = (color (random 1 254 as integer) (random 1 254 as integer) (random 1 254 as integer))
-				)
-				--Test for N uniqness
-				if /*(findItem sceneMaterials vraymat)!=0*/okMtlForScene vraymat==false then (vraymat.name+="_1")--CORREGIR ESTO
-				setMeditMaterial id vraymat
-				showTextureMap vraymat true 
-				setMTLMEditFlags vraymat #{2..4}
+	struct vrayPop
+	(
+		fn assignMat r id =
+		(
+			local vraymat= vraymtl ()
+			local n= ("vrayMtl_"+ (floor(random 1 100) as integer )as String)
+			vraymat.name=n
+			if r== true then (
+				vraymat.diffuse = (color (random 1 254 as integer) (random 1 254 as integer) (random 1 254 as integer))
 			)
-			case chk of(
-				true:(	
+			--Test for N uniqness
+			if okMtlForScene vraymat==false then (vraymat.name+="_1")
+			setMeditMaterial id vraymat
+			showTextureMap vraymat true 
+			setMTLMEditFlags vraymat #{2..4}
+		),
+		fn setVraySlots rndColor:false chk:true =
+		(
+			case chk of
+			(
+				true:
+				(	
 					for i=1 to meditMaterials.count do (
-						if (findItem sceneMaterials meditMaterials[i])==0 then(
-							assignMat rndColor i
-						)
+						if (findItem sceneMaterials meditMaterials[i]) == 0 then ( assignMat rndColor i)
 					)
 				)
-				false:(
-					for i=1 to meditMaterials.count do (
-						assignMat rndColor i
-					)
+				false:
+				(
+					for i=1 to meditMaterials.count do ( assignMat rndColor i )
 				)
 			)
 		)
 	)
+	_t = vrayPop()
 )
