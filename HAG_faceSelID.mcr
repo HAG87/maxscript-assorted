@@ -23,12 +23,6 @@ macroScript HAG_faceSel
 						local faceID = polyop.getFaceMatID obj currFaceArr[1]
 						local tempFaces = #()
 						tempFaces = for i=1 to faceCount where (polyop.getFaceMatID obj i == faceID) collect i
-						/*
-						for i=1 to faceCount do (
-							local a =  polyop.getFaceMatID obj i
-							if a == faceID then (append tempFaces i)
-						)
-						*/
 						polyop.setFaceSelection obj tempFaces
 						redrawViews()
 					)

@@ -1,12 +1,18 @@
-# maxscript tools
-###Random detach poly elements
-###Populate medit with vraymtl
-###Vertex scrambler
-###Advanced user path manager
-###Support scripts for DesignToolBox - refGuides
-###Some oher assorted scripts
-#MCG solutions
-###HyperClone
-advanced cloning tool
-###ShereClone
-instance objects on a spherical space or in a convex closed mesh
+# Free 3ds Max Tools
+
+## maxscript tools
+* "Put assets inline"
+* Panel cuts (Tool for creating panel cuts reports. Useful for furniture or cabinets design)
+* Random detach **editable poly** elements.
+* Populate material editor slots with VRayMtl
+* Select Edit Poly faces by materialID
+* Vertex scrambler
+* Advanced user path manager
+* Support scripts for **DesignToolBox** *(commercial plug-in)*
+* Some other assorted scripts
+
+## MCG solutions
+
+* **HyperClone**: Advanced cloning tool.
+
+* **ShereClone**: Instance objects on a spherical space or in a convex closed mesh.
