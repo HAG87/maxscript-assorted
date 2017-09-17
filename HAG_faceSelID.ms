@@ -22,10 +22,13 @@ macroScript HAG_faceSel
 					if currFaceArr[1] != undefined then (
 						local faceID = polyop.getFaceMatID obj currFaceArr[1]
 						local tempFaces = #()
+						tempFaces = for i=1 to faceCount where (polyop.getFaceMatID obj i == faceID) collect i
+						/*
 						for i=1 to faceCount do (
 							local a =  polyop.getFaceMatID obj i
 							if a == faceID then (append tempFaces i)
-						)	
+						)
+						*/
 						polyop.setFaceSelection obj tempFaces
 						redrawViews()
 					)
@@ -34,7 +37,8 @@ macroScript HAG_faceSel
 		)
 		On IsEnabled Return Filters.Is_EditPoly()
 		On IsVisible Return Filters.Is_EditPoly()
-		on execute do(
+		On execute do
+		(
 			local theObj = if selection[1] != undefined then selection[1] else undefined
 			selectMatID theObj
 		)

@@ -1,5 +1,5 @@
 macroScript removeEdges
-	category:"HAG"
+	category:"HAG tools"
 	toolTip:"REMOVE POLY EDGES"
 (
 	macros.run "Editable Polygon Object" "EPoly_Convert_Sel_To_Vertex"

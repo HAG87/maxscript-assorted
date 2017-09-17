@@ -5,24 +5,16 @@ macroScript HAG_VrayMts_gray
 (
 	on execute do (	
 		local setMat = fileIn @"$userScripts/HAG tools/HAG_VrayMtlPopulate.ms"
-		if queryBox "conserve scene materials slots?" then(
-			setMat.setVraySlots rndColor:false chk:true
-		)else(
-			setMat.setVraySlots rndColor:false chk:false
-		)
+		setMat.setSlots rndColor:false chk:(queryBox "Conserve scene materials slots?")
 	)
 )
 macroScript HAG_VrayMts_rnd
 	category:"HAG tools" 
-	ButtonText:"VrayMtl rndC" 
-	toolTip:"Populate Medit Slots with Vray Materials apply random coloring"
+	ButtonText:"VrayMtl rnd" 
+	toolTip:"Populate Medit Slots with Vray Materials, apply random diffuse color"
 (
 	on execute do (	
 		local setMat = fileIn @"$userScripts/HAG tools/HAG_VrayMtlPopulate.ms"
-		if queryBox "conserve scene materials slots?" then(
-			setMat.setVraySlots rndColor:true chk:true
-		)else(
-			setMat.setVraySlots rndColor:true chk:false
-		)
+		setMat.setSlots rndColor:true chk:(queryBox "Conserve scene materials slots?")
 	)
 )
