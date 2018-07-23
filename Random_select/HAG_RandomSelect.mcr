@@ -1,6 +1,9 @@
 
 MacroScript HAG_RndSel "Random Select"
+category:"HAG tools"
+ButtonText:"RNDSEL"
 tooltip:"Select radom nodes"
+
 (
 	fn rndItemsPercent c p =
 	(
