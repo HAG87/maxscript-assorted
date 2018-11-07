@@ -1,9 +1,8 @@
-
-MacroScript HAG_RndSel "Random Select"
-category:"HAG tools"
-ButtonText:"RNDSEL"
-tooltip:"Select radom nodes"
-
+macroScript HAG_RndSel
+			category:         "HAG tools"
+			ButtonText:       "Random Select"
+			silentErrors:     true
+			tooltip:"Select radom nodes"
 (
 	fn rndItemsPercent c p =
 	(
@@ -77,7 +76,8 @@ tooltip:"Select radom nodes"
 			spinner spn_5 "Qty." range:[1,1000,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right
 		)
 		button btn_1 "Select Random" height:30 width:(roll_rndSel.width - 25)
-		button btn_2 "Done" height:30 width:(roll_rndSel.width - 25)
+		button btn_2 "Re-Select" height:30 width:(roll_rndSel.width - 25)
+		--	button btn_2 "Done" height:30 width:(roll_rndSel.width - 25)
 		-----------------------------------------
 		local mode = 1,
 		sel, sel_count
@@ -93,7 +93,9 @@ tooltip:"Select radom nodes"
 			)
 			if rnd.count > 0 then (
 				res = for i = 1 to rnd.count where (isValidNode s[rnd[i]]) collect s[rnd[i]]
-			) else res = s
+			) else (
+				res = for i = 1 to s.count where (isValidNode s[i]) collect s[i]
+			)
 			res
 		)
 		fn test_sel =
@@ -186,9 +188,33 @@ tooltip:"Select radom nodes"
 			)
 		)
 		on btn_2 pressed do (
-			DestroyDialog roll_rndSel
+			--	DestroyDialog roll_rndSel
+			test_sel()
+
 		)
 		
 	)
 	CreateDialog roll_rndSel	
+)
+macroScript HAG_RndIDSet
+			category:         "HAG tools"
+			ButtonText:       "Random ID Set"
+			silentErrors:     true
+			tooltip:"Set random IDs"
+(
+	fn randMatID obj min:1 max:5 =
+	(
+		if obj !=undefined then (
+			if ((isKindOf obj Editable_Poly) and (subObjectLevel == 4)) then (
+				local faceCount = polyop.getNumFaces obj
+				local currFace= polyop.getFaceSelection obj				
+				local currFaceArr = currFace as Array				
+				if currFaceArr[1] != undefined then (					
+					for i in currFaceArr do polyop.setFaceMatID obj i (abs (floor (random min max)))
+					redrawViews()
+				)
+			)
+		)
+	)
+	on execute do try (randMatID $) catch ()
 )

@@ -8,6 +8,8 @@
 | .\Panel_cuts | Panel cuts | Tool for creating panel cuts reports. Useful for furniture or cabinets design.
 | .\Random_detach | Random Detach | Random detach **editable poly** elements.
 | .\Random_select | Random Select | Random nodes selection
+| .\Random_select | Random ID | Assign Random IDs to polys
+| .\Render_tools | Camera Manager | Camera Review/Switcher and Add to Batch  utility
 | .\Resizer_mod | Resize modifier | Change node XYZ dimensions.
 | .\Vertex_scrambler | Vertex scrambler | Random shift vertex positions in a mesh.
 | .\VrayMat_populate | | Populate material editor slots with VRayMtl
