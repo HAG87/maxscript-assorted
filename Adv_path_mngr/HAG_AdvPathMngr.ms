@@ -1,21 +1,25 @@
 (
-	--	clearListener()
 	rollout roll_mPath "Advanced External Files (User Paths) Manager" width:1000 --height:400
 	(
 		dotNetControl lst_mPath "ListView" height:300
 		button btn_1 "Change / Resolve" width:150 align:#left across:4
-		button btn_2 "Remove" width:150 offset:[-80,0] align:#left
-		button btn_3 "Add" width:150 offset:[-160,0] align:#left
-		button btn_4 "Show Only Invalids" align:#right
+		button btn_3 "Add" width:150 offset:[-80,0] align:#left
+		button btn_2 "Remove" width:150 offset:[-160,0] align:#left
+		checkbutton btn_4 "Show Only Invalids" align:#right
+		
+		checkBox chk_sb "Sub-Directories search filter" align:#left checked:true across:2
+		editText txt_filter "Pattern: " Text:"#(\"map*\",\"texture*\")" align:#right
+		
 		imgTag sep1 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
 		button btn_7 "Remove ..." width:150 align:#left across:6
 		checkbox chk_1 "Empty folders" checked:true width:80 align:#right 
 		checkbox chk_2 "Not Images" width:80 align:#right
 		checkbox chk_3 "Not Models" width:80 align:#right
 		checkbox chk_4 "Other (specify):" align:#right
-		editText txt_1 text:"#(\".ies\",\".svg\")" align:#left	
+		editText txt_1 text:"#(\".ies\",\".svg\")" align:#left
 		imgTag sep2 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
-		button btn_5 "Done" width:150 height:30 offset:[320,0] align:#right across:2
+		button btn_open "Explore selected" height:30 align:#left across:3
+		button btn_5 "Done" width:150 height:30 align:#right	offset:[160,0]
 		button btn_6 "Cancel" width:150 height:30 align:#right
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local only_invalid = false
@@ -23,6 +27,8 @@
 		local temp_paths = #()
 		local add_paths = #()
 		local remove_paths = #()
+		--
+		local temp_listItemsCol
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- file extensions, add as needed
 		local img_ext = #(".jpg",".jpeg",".png",".tif",".tiff",".tga",".bmp",".exr",".gif", ".hdr", ".hdri")
@@ -38,6 +44,10 @@
 		local font_reg = (dotNetClass "System.Drawing.FontStyle").Regular
 		local folder_dialog = dotnetobject "FolderBrowserDialog"
 		local dotNetDirectory = dotnetclass "System.IO.Directory"
+		local DirectorySearch = (dotNetClass"System.IO.SearchOption").AllDirectories
+		local dotNetSort = dotNetClass "System.Windows.Forms.SortOrder"
+		----------------------------------------------------------------------------------------------------------------------------------------------------
+		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Compare function used by bsearch:
 		fn extComparator a b =
@@ -58,55 +68,41 @@
 		(
 			if a > b then 1
 				else if a < b then -1
-					else 0
+				else 0
 		)
-		fn GetAllSubDirs MyDirectory =
+		-- Retrieve subdirectorries
+		fn GetAllSubDirs MyDirectory _filter:#("map*","texture*") =
 		(
+			local curr_folder = 
+				if _filter != unsupplied then (
+					local temp = #()
+					for i in _filter do ( join temp (dotNetDirectory.GetDirectories MyDirectory i DirectorySearch) )
+					temp
+				) else ( dotNetDirectory.GetDirectories MyDirectory "*" DirectorySearch )
+			curr_folder
+			/*
 			local
 			temp = #(),
 			s = 1,
 			folders = getDirectories (MyDirectory + "/*"),
-			t = folders.count
+			t = folders.count	
 			while s < t do
 			(
-				for i = s to t do (temp = getDirectories (folders[i]+"*")
-				for j = 1 to temp.count do folders[folders.count+1] = temp[j] )
+				for i = s to t do (
+					temp = getDirectories (folders[i]+"*")
+					-- apply filter
+					for j = 1 to temp.count do folders[folders.count+1] = temp[j]
+				)
 				s = t
 				t = folders.count
 			)
 			sort folders
 			for i=1 to folders.count do (folders[i] = trimRight folders[i] "\\")
 			folders
+			---	*/
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
-		fn lstV_addColumns lst itms autosize:false =
-		(
-			local HZ = (dotNetClass "HorizontalAlignment").Left
-			local w = if not autosize then ( (lst.width/itms.count)-1 ) else -2
-			for x in itms do ( lst.columns.add x w HZ )
-		)
-		fn lstV_addItem lst itmCol colorCol: font: = 
-		(
-			if (isKindOf itmCol Array) then (
-				local dotNetFontStyle = if font != unsupplied then (dotNetObject dotNetFont (lst.Font) font)
-				
-				local itms = for l=1 to itmCol.count collect (
-					local itm = dotNetObject dotNetLstViewItemClass itmCol[l]
-					itm.tag = l
-					if font != unsupplied then (itm.Font = dotNetFontStyle)
-					if colorCol != unsupplied then ( if colorCol[l] != "" then itm.ForeColor = colorCol[l] )
-					if (bit.get l 1) do (itm.BackColor = dotNetColor.LightGray)
-					itm
-				)
-				
-				lst.BeginUpdate()
-					lst.Items.AddRange itms
-					lst.AutoResizeColumns (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent
-					lst.AutoResizeColumns (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize
-				lst.EndUpdate()
-			)
-		)
-		-- reaply style
+		-- Reaply style
 		fn lst_restyle =
 		(
 			local list_items = lst_mPath.Items
@@ -114,89 +110,106 @@
 				list_items.Item[f].BackColor = if (bit.get f 1) then dotNetColor.Transparent else dotNetColor.LightGray
 			)
 		)
-		
-		fn parse_items mP_list =
+		-- Add columns to listView
+		fn lstV_addColumns lst itms autosize:false =
 		(
-			if mP_list != undefined then (
-				local ColrList = #()
-				ColrList[mP_list.count] = ""				
-				local res_list = for i=1 to mP_list.count collect (
-					local itm = #()
-					itm[1] = pathConfig.stripPathToLeaf mP_list[i]
-					itm[2] = mP_list[i]
-					itm[3] = (getFiles (pathConfig.appendPath mP_list[i] "*.*")).count as string						
-					if (dotNetDirectory.exists mP_list[i]) then (
-						itm[4] = "OK"
-						ColrList[i] = dotNetColor.seagreen
-					) else (
-						itm[4] = "MISSING"
-						ColrList[i] = dotNetColor.Crimson
-					)
-					itm[5] = if (pathConfig.isAbsolutePath mP_list[i]) then "Absolute" else ( if (pathConfig.isUncPath mP_list[i]) then "UNC" else "-" )
-					itm
-				)
-				#(res_list, ColrList)
-			) else undefined
+			local HZ = (dotNetClass "HorizontalAlignment").Left
+			local w = if not autosize then ( (lst.width/itms.count)-1 ) else -2
+			for x in itms do ( lst.columns.add x w HZ )
 		)
-		
+		-- Add items to listView
+		fn lstV_addItem lst itmCol =
+		(
+			lst.BeginUpdate()
+				lst.Items.AddRange itmCol
+				lst.AutoResizeColumns (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent
+				lst.AutoResizeColumns (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize
+			lst_restyle()
+			lst.EndUpdate()
+		)
+		-- Process paths into ListView items
+		fn parse_items mP_list font: listView:lst_mPath =
+		(
+			local res_list = #()
+			if mP_list != undefined then (
+				local ForeColor
+				local currpath
+				local subitems
+				local res_list =
+				for i=1 to mP_list.count collect (
+					currpath = mP_list[i]
+					subitems = #()
+					subitems[5] = if (pathConfig.isAbsolutePath currpath) then "Absolute" else if (pathConfig.isUncPath currpath) then "UNC" else "-"
+					subitems[1] = pathConfig.stripPathToLeaf currpath
+					subitems[2] = currpath
+					subitems[3] = (getFiles (pathConfig.appendPath currpath "*.*")).count as string
+					subitems[4] = if (dotNetDirectory.exists currpath) then (ForeColor = dotNetColor.seagreen; "OK") else (ForeColor = dotNetColor.Crimson;"MISSING")
+					-- Initialize Item
+					local item = dotNetObject dotNetLstViewItemClass subitems
+					item.tag = i
+					item.ForeColor = ForeColor
+					item.BackColor = if (bit.get i 1) then dotNetColor.Transparent else dotNetColor.LightGray
+					if font != unsupplied then item.Font = (dotNetObject dotNetFont (listView.Font) font)
+					item
+				)
+			)
+			res_list
+		)
+		-- Update Item
 		fn update_item the_item new_path =
 		(
 			local the_subitems = the_item.subitems
 			the_item.text = pathConfig.stripPathToLeaf new_path
 			the_subitems.item[1].text = new_path
 			the_subitems.item[2].text = (getFiles (pathConfig.appendPath new_path "*.*")).count as string
+			the_subitems.item[3].text = 
 			if (dotNetDirectory.exists new_path) then (
-				the_subitems.item[3].text = "OK"
 				the_item.ForeColor = dotNetColor.seagreen
+				"OK"
 			) else (
-				the_subitems.item[3].text = "MISSING"
 				the_item.ForeColor = dotNetColor.Crimson
+				"MISSING"
 			)
-			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else ( if (pathConfig.isUncPath new_path) then "UNC" else "-" )
+			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else if (pathConfig.isUncPath new_path) then "UNC" else "-"
 		)
+		-- Initialize Collection
 		fn Init =
 		(
-			local u_paths = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
-			temp_paths = deepcopy u_paths
-			local result_items = parse_items temp_paths
-			if result_items != undefined then (
-				lstV_addItem lst_mPath (result_items[1]) colorCol:(result_items[2])
-			)
+			-- Collect user paths
+			temp_paths = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
+			-- Process paths into ListView items
+			lstV_addItem lst_mPath (parse_items temp_paths)
 		)
+		-- Commit changes to Paths
 		fn commit =
 		(
-			if queryBox "Commit changes ?" then (
-				-- delete items
-				progressStart "Deleting user paths"
+			if not (queryBox "Commit changes ?") then return false
+			-- delete items
+			--	progressStart "Deleting user paths"
 				remove_paths = makeUniqueArray remove_paths
-				local rem_count = remove_paths.count
-				for r = rem_count to 1 by -1 do (
-					progressUpdate ( (rem_count- r) * 100 / rem_count)
+				for r=1 to remove_paths.count do (
+				--	progressUpdate ( r * 100 / rem_count)
 					local f_o = findItem temp_paths remove_paths[r]
--- 					local f_o = bsearch remove_paths[r] temp_paths ArrayComparator
--- 					if f_o != undefined then (
-					if f_o != 0 then (
-						mapPaths.delete f_o
--- 							print remove_paths[r]
-					)
+					if f_o != 0 then mapPaths.delete f_o
 				)
-				progressEnd()
-				-- add items
-				add_paths = makeUniqueArray add_paths
-				local add_count = add_paths.count
-				progressStart "Adding user paths"
-					for i=1 to add_count do (
-						progressUpdate ( i * 100 / add_count)
-						local f_o = findItem temp_paths add_paths[i]
--- 						local f_o = bsearch add_paths[i] temp_paths ArrayComparator
--- 						if f_o == undefined then (
-						if f_o == 0 then (
-							mapPaths.add add_paths[i]
--- 							print add_paths[i]
-						)
-					)
-				progressEnd()
-			)
+			--	progressEnd()
+			-- add items
+			add_paths = makeUniqueArray add_paths
+			local add_count = add_paths.count
+			--	progressStart "Adding user paths"
+				for i=1 to add_count do (
+				--	progressUpdate ( i * 100 / add_count)
+					mapPaths.add add_paths[i]
+				)
+			--	progressEnd()
+		)
+		fn openDir =
+		(
+			local itms = lst_mPath.SelectedItems.Item
+			--local itms_count = lst_mPath.SelectedItems.count
+			--if itms_count == 1 then ()
+			local the_item_path = itms[0].Subitems.Item[1].text
+			DOSCommand ("explorer " + "\"" + the_item_path + "\"")			
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Initialize
@@ -209,9 +222,9 @@
 			--Set so full width of listView is selected and not just first column.
 			lst_mPath.FullRowSelect = true
 			--Show lines between the items. 
-			lst_mPath.GridLines = true			
+			lst_mPath.GridLines = true
 			--Allow for multiple selections.
-			lst_mPath.MultiSelect = true			
+			lst_mPath.MultiSelect = true
 			-- Allow Label Edit
 			lst_mPath.LabelEdit = True
 			-- Allow Column order change
@@ -225,18 +238,20 @@
 			-- make the border a flat solid color instead of the Windows 3D look
 			lst_mPath.BorderStyle = lst_mPath.BorderStyle.FixedSingle 
 			-- required in order to implement DotNet drag and drop functionality
-			lst_mPath.allowDrop = true		
+			lst_mPath.allowDrop = true
+			-- Items Sort
+			lst_mPath.Sorting = dotNetSort.Ascending
 			--------------------------------------------------------------------------------------------------------------------------------
 			-- Add Columns
 			lstV_addColumns lst_mPath #("Folder name", "Full path", "Files", "Status", "Type") autosize:True
 			-- Add Items
 			Init()
-			--	lst_mPath.clear()
+			--	lst_mPath.Items.Clear()
 		)
 		-- close
 		on roll_mPath close do ( lst_mPath.Dispose(); gc())
 		---------------------------------------------------------------------------------------------------------------------------------------------------- Event handlers
-		-- change items
+		-- Change items
 		on btn_1 pressed do
 		(
 			local underline = dotNetObject dotNetFont (lst_mPath.Font) font_underline
@@ -245,19 +260,16 @@
 			local itms_count = lst_mPath.SelectedItems.count
 			for i=0 to itms_count-1 do (
 				local the_item = itms[i]
--- 				print the_item
-				local res = folder_dialog.showDialog()
+				folder_dialog.showDialog()
 				local new_path = folder_dialog.SelectedPath
 				if new_path != "" then (
-					the_item.Font = underline
-					local itm_path = the_item.Subitems.Item[1]
-					local old_path = itm_path.text
-					-- update listview
-					update_item the_item new_path
 					-- add old to remove list
-					appendIfUnique remove_paths old_path
+					appendIfUnique remove_paths (the_item.Subitems.Item[1].text)
 					-- add new to add list
 					appendIfUnique add_paths new_path
+					-- update listview
+					the_item.Font = underline
+					update_item the_item new_path
 				)
 			)
 		)
@@ -288,30 +300,32 @@
 			local the_path = folder_dialog.SelectedPath
 			if the_path != "" then (
 				local the_paths = #(the_path)
-				if (queryBox "Add subfolders too?") then join the_paths (GetAllSubDirs the_path)
-				local result_items = parse_items the_paths
-				if result_items != undefined then (
-					lstV_addItem lst_mPath (result_items[1]) colorCol:(result_items[2]) font:(font_Bold)
-					-- add to temp results
-					join add_paths the_paths
+				if (queryBox "Add subfolders too?") then join the_paths (
+					if chk_sb.state then (						
+						GetAllSubDirs the_path _filter:(execute txt_filter.text)	
+					) else (
+						GetAllSubDirs the_path _filter:unsupplied
+					)
 				)
+				-- add to temp results
+				join add_paths the_paths
+				-- add to list
+				lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
 			)
 		)
 		-- invalid paths filter
-		on btn_4 pressed do
+		on btn_4 changed state do
 		(
-			if (not only_invalid) then (
-				only_invalid = not only_invalid
-				local items_col = lst_mPath.Items
-				lst_mPath.BeginUpdate()
-				for i=(items_col.count)-1 to 0 by -1 do (
-					local the_item = items_col.Item[i]
-					local the_item_sub = the_item.Subitems.Item[3]
-					local status = the_item_sub.text
-					if status == "OK" then ( items_col.Remove(the_item) )
-				)
-				-- reapply style
-				lst_mPath.EndUpdate()
+			if state then (
+				items_col = lst_mPath.Items
+				temp_listItemsCol = for i= 0 to (items_col.count)-1 where (items_col.Item[i].Subitems.Item[3].text == "OK") collect items_col.Item[i]
+				local temp_items = 
+				for i = (items_col.count)-1 to 0 by -1 where (items_col.Item[i].Subitems.Item[3].text != "OK") collect (items_col.Item[i].Clone())
+				lst_mPath.Items.Clear()
+				lstV_addItem lst_mPath temp_items
+			) else (
+				lstV_addItem lst_mPath temp_listItemsCol
+				lst_mPath.Sort()
 			)
 		)
 		-- remove unwanted WIP
@@ -364,7 +378,7 @@
 						cnt += 1
 					) while ((cnt < md_ext.count) and (res == 0))
 					if res == 0 then c else continue
-				)		
+				)
 				join marked not_models
 			)
 			-- other
@@ -401,6 +415,7 @@
 		-- accept
 		on btn_5 pressed do (commit(); DestroyDialog roll_mPath)
 		on btn_6 pressed do (DestroyDialog roll_mPath)
+		on btn_open pressed do (openDir())
 	)
 	CreateDialog roll_mPath
 )

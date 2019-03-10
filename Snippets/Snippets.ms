@@ -1,4 +1,5 @@
 (
+	/* LIST NODE PROPERTIES */
 	fn props_lister obj = 
 	(
 		ClearListener()
@@ -6,7 +7,7 @@
 		p_str = for i in p_names collect (i as string)
 		for i in p_str do (format "%\n" i)
 	)
-	-- add new layer and set options
+	/* add new layer and set options */
 	fn addLay obj layerName:"layer_test_" =
 	(
 		if not(LayerManager.getLayerFromName layerName) then
@@ -18,12 +19,14 @@
 			try (refLay.addNode obj) catch ()
 		)
 	)
+	/* MATRIX FROM 3 POINTS */
 	fn getMatrix p1 p2 p3 = (
 		v1 = normalize (p2 - p1)
 		v3 = normalize (cross v1 (normalize (p3 - p1)))
 		v2 = normalize (cross v3 v1)
 		return matrix3 v1 v2 v3 p1
 	)
+	/* RESET ROTATION */
 	fn resetAxisRot obj axis:x = (
 		local objTM = obj.transform
 		local objTR = obj.position
@@ -39,7 +42,7 @@
 		newTM.row4 = objTR
 		obj.transform = newTM
 	)
-	-- set Onj ID relative to camera distance
+	/* set Onj ID relative to camera distance */
 	fn setObjID =
 	(
 		local cam = getActiveCamera()
@@ -65,6 +68,13 @@
 			)
 			
 		)
+	)
+	/* SELECT ALL NODES WHITOUT MATERIAL*/
+	fn sel_nomat =
+	(
+		local sel = getCurrentSelection()
+		local nomat = for i in sel where (i.material == undefined and not (isgrouphead i)) collect i
+		select nomat
 	)
 
 )

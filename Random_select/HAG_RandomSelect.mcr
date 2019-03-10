@@ -2,7 +2,7 @@ macroScript HAG_RndSel
 			category:         "HAG tools"
 			ButtonText:       "Random Select"
 			silentErrors:     true
-			tooltip:"Select radom nodes"
+			toolTip:"Select random nodes"
 (
 	fn rndItemsPercent c p =
 	(
@@ -62,7 +62,7 @@ macroScript HAG_RndSel
 	(
 		group "Mode"
 		(
-			radioButtons rd_1 labels:#("Percent","Step", "Substract")
+			radioButtons rd_1 labels:#("Percent","Step", "Substract", "Pattern") columns:2
 		)
 		group "Values"
 		(
@@ -70,10 +70,10 @@ macroScript HAG_RndSel
 			spinner spn_2 "Step" range:[1,1000,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
 			spinner spn_3 "Subst. %" range:[0,99,50] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
 		)
-		group "Deselect Pattern"
+		group "Pattern"
 		(
-			spinner spn_4 "Step" range:[1,100,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right
-			spinner spn_5 "Qty." range:[1,1000,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right
+			spinner spn_4 "Keep" range:[1,100,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
+			spinner spn_5 "Quit" range:[1,1000,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
 		)
 		button btn_1 "Select Random" height:30 width:(roll_rndSel.width - 25)
 		button btn_2 "Re-Select" height:30 width:(roll_rndSel.width - 25)
@@ -82,6 +82,18 @@ macroScript HAG_RndSel
 		local mode = 1,
 		sel, sel_count
 		-----------------------------------------
+		fn selPattern sel c st qn =
+		(
+			local res = #()
+			local delta = st + qn
+			if delta < c then (
+				for i=1 to (c - delta) by delta do (
+					local tmp = for f = 1 to st collect sel[i+f]
+					join res tmp
+				)
+			)
+			res
+		)
 		fn rndSel s c x mode:1  =
 		(
 			local rnd, res
@@ -120,16 +132,29 @@ macroScript HAG_RndSel
 					spn_1.enabled = true
 					spn_2.enabled = false
 					spn_3.enabled = false
+					spn_4.enabled = false
+					spn_5.enabled = false
 				)
 				2: (
 					spn_1.enabled = false
 					spn_2.enabled = true
 					spn_3.enabled = false
+					spn_4.enabled = false
+					spn_5.enabled = false
 				)
 				3: (
 					spn_1.enabled = false
 					spn_2.enabled = false
 					spn_3.enabled = true
+					spn_4.enabled = false
+					spn_5.enabled = false
+				)
+				4: (
+					spn_1.enabled = false
+					spn_2.enabled = false
+					spn_3.enabled = false
+					spn_4.enabled = true
+					spn_5.enabled = true
 				)
 			)
 		)
@@ -151,18 +176,7 @@ macroScript HAG_RndSel
 			else
 			select (rndSel sel sel_count val mode:3)
 		)
-		fn selPattern sel c st qn =
-		(
-			local res = #()
-			local delta = st + qn
-			if delta < c then (
-				for i=1 to (c - delta) by delta do (
-					local tmp = for f = 1 to st collect sel[i+f]
-					join res tmp
-				)
-			)
-			res
-		)
+
 		on spn_4 changed val do
 		(
 			if sel.count == 0 then test_sel()
@@ -184,6 +198,7 @@ macroScript HAG_RndSel
 					1: ( select (rndSel sel sel_count spn_1.value mode:1) )
 					2: ( select (rndSel sel sel_count spn_2.value mode:2) )
 					3: ( select (rndSel sel sel_count spn_3.value mode:3) )
+					4: ( select selPattern sel sel_count spn_4.value spn_5.value )
 				)
 			)
 		)
