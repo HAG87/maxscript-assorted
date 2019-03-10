@@ -62,13 +62,13 @@ macroScript HAG_RndSel
 	(
 		group "Mode"
 		(
-			radioButtons rd_1 labels:#("Percent","Step", "Substract", "Pattern") columns:2
+			radioButtons rd_1 labels:#("Percent","Step", "Subtract", "Pattern") columns:2
 		)
 		group "Values"
 		(
 			spinner spn_1 "Percent" range:[1,100,50] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right
 			spinner spn_2 "Step" range:[1,1000,1] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
-			spinner spn_3 "Subst. %" range:[0,99,50] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
+			spinner spn_3 "Subtr. %" range:[0,99,50] type:#integer fieldWidth:(roll_rndSel.width/2) align:#right enabled:false
 		)
 		group "Pattern"
 		(
