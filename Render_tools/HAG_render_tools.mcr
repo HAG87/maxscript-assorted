@@ -150,6 +150,18 @@ macroScript HAG_CamMngr
 				)
 			)
 		)
+		fn list_views =
+		(
+			local gv = batchRenderMgr.GetView
+			local num = batchRenderMgr.numViews
+			local col = for i=1 to num collect (
+				local the_view = gv i
+				local st = if the_view.enabled then "[x] " else "[o] "
+				st+the_view.name
+			)
+			lst_2.items = col
+			
+		)
 		fn view_add =
 		(
 			local temp_cam = undefined
@@ -176,18 +188,7 @@ macroScript HAG_CamMngr
 				) else messageBox "View Already exist.\nChange name and try again."
 			)
 		)
-		fn list_views =
-		(
-			local gv = batchRenderMgr.GetView
-			local num = batchRenderMgr.numViews
-			local col = for i=1 to num collect (
-				local the_view = gv i
-				local st = if the_view.enabled then "[x] " else "[o] "
-				st+the_view.name
-			)
-			lst_2.items = col
-			
-		)
+
 		fn get_view_params index =
 		(
 			local the_view = try (batchRenderMgr.GetView index) catch undefined
