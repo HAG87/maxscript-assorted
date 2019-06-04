@@ -76,5 +76,6 @@
 		local nomat = for i in sel where (i.material == undefined and not (isgrouphead i)) collect i
 		select nomat
 	)
-
+	/* FIX VRAY NEXT GLOSSINESS UNLOCK */
+	fn vrayFixGlossLock = for m in (getclassinstances vraymtl) do m.reflection_lockGlossiness = true
 )
