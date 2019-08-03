@@ -1,8 +1,13 @@
+/*
+------------------------------------------------------------------------------------------------------------------
+Random object selection
+------------------------------------------------------------------------------------------------------------------
+*/
 macroScript HAG_RndSel
-			category:         "HAG tools"
-			ButtonText:       "Random Select"
-			silentErrors:     true
-			toolTip:"Select random nodes"
+	category:     "HAG tools"
+	ButtonText:   "Random Select"
+	toolTip:      "Select random nodes"
+	silentErrors: true
 (
 	fn rndItemsPercent c p =
 	(
@@ -12,9 +17,7 @@ macroScript HAG_RndSel
 			local r = random 1 c
 			if ((findItem res r) != 0) then
 			(
-				do (
-					r = random 1 c
-				) while ((findItem res d) != 0)
+				do ( r = random 1 c ) while ((findItem res d) != 0)
 			)
 			append res r
 		)
@@ -24,24 +27,17 @@ macroScript HAG_RndSel
 	fn rndItemsSubstr c p =
 	(
 		local itms_count = c - ( ceil (c * p) as integer )
-		format "%\n" itms_count
-
 		local res = #()
-		
 		if ( itms_count > 0) then (
 			for i = 1 to itms_count do (
 				local r = random 1 c
 				if ((findItem res r) != 0) then
 				(
-					do (
-						r = random 1 c
-					) while ((findItem res d) != 0)
+					do ( r = random 1 c ) while ((findItem res d) != 0)
 				)
 				append res r
 			)
 		)
-		
-		
 		sort res
 		res
 	)
@@ -53,9 +49,7 @@ macroScript HAG_RndSel
 			for i = 1 to bits.count by s where ((random 0 1) == 1) do bits[i] = false
 			res = bits as Array
 			sort res
-		) else (
-			res = #()
-		)
+		) else ( res = #() )
 		res
 	)
 	rollout roll_rndSel "Random selection"
@@ -113,7 +107,7 @@ macroScript HAG_RndSel
 		fn test_sel =
 		(
 			sel = getCurrentSelection()
-			if sel.count != 0 then 
+			if sel.count != 0 then
 				sel_count = sel.count
 			else
 				messageBox "Select some nodes!"
@@ -160,34 +154,23 @@ macroScript HAG_RndSel
 		)
 		on spn_1 changed val do
 		(
-			if sel.count == 0 then test_sel()
-			 else
-			select (rndSel sel sel_count val mode:1)
+			if sel.count == 0 then test_sel() else select (rndSel sel sel_count val mode:1)
 		)
 		on spn_2 changed val do
 		(
-			if sel.count == 0 then test_sel()
-			else
-			select (rndSel sel sel_count val mode:2)
+			if sel.count == 0 then test_sel() else select (rndSel sel sel_count val mode:2)
 		)
 		on spn_3 changed val do
 		(
-			if sel.count == 0 then test_sel()
-			else
-			select (rndSel sel sel_count val mode:3)
+			if sel.count == 0 then test_sel() else select (rndSel sel sel_count val mode:3)
 		)
-
 		on spn_4 changed val do
 		(
-			if sel.count == 0 then test_sel()
-			else
-				select (selPattern sel sel_count val spn_5.value)
+			if sel.count == 0 then test_sel() else select (selPattern sel sel_count val spn_5.value)
 		)
 		on spn_5 changed val do
 		(
-			if sel.count == 0 then test_sel()
-			else
-				select (selPattern sel sel_count spn_4.value val)
+			if sel.count == 0 then test_sel() else select (selPattern sel sel_count spn_4.value val)
 		)
 		on btn_1 pressed do
 		(
@@ -207,29 +190,6 @@ macroScript HAG_RndSel
 			test_sel()
 
 		)
-		
 	)
-	CreateDialog roll_rndSel	
-)
-macroScript HAG_RndIDSet
-			category:         "HAG tools"
-			ButtonText:       "Random ID Set"
-			silentErrors:     true
-			tooltip:"Set random IDs"
-(
-	fn randMatID obj min:1 max:5 =
-	(
-		if obj !=undefined then (
-			if ((isKindOf obj Editable_Poly) and (subObjectLevel == 4)) then (
-				local faceCount = polyop.getNumFaces obj
-				local currFace= polyop.getFaceSelection obj				
-				local currFaceArr = currFace as Array				
-				if currFaceArr[1] != undefined then (					
-					for i in currFaceArr do polyop.setFaceMatID obj i (abs (floor (random min max)))
-					redrawViews()
-				)
-			)
-		)
-	)
-	on execute do try (randMatID $) catch ()
+	CreateDialog roll_rndSel
 )

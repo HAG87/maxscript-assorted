@@ -5,12 +5,13 @@ rev 1.5 03/06/2019
 * -----------------------------------------------------------------------------------
 */
 macroScript HAG_CamMngr
-		category:         "HAG tools"
-		ButtonText:       "Camera manager"
-		tooltip:          "Manage Cameras and render batch views"
-		silentErrors:     false
+		category:     "HAG tools"
+		ButtonText:   "Camera manager"
+		tooltip:      "Manage Cameras and render batch views"
+		silentErrors: false
+		icon:         #("extratools", 1)
 (
-	-- 	global roll_cambatch	
+	-- 	global roll_cambatch
 	rollout roll_cambatch "Camera Manager" width:250
 	(
 		local roll_w = roll_cambatch.width
@@ -32,7 +33,7 @@ macroScript HAG_CamMngr
 		(
 			spinner spn_1 "Width" type:#integer range:[1,1000000,100] fieldwidth:65 align:#right across:2
 			spinner spn_3 "Ratio" type:#float range:[0.0,6.0,1.33] fieldwidth:65 align:#right
-			spinner spn_2 "Height" type:#integer range:[1,1000000,100] fieldwidth:65 align:#right across:2		
+			spinner spn_2 "Height" type:#integer range:[1,1000000,100] fieldwidth:65 align:#right across:2
 			checkButton chk_ratio "LOCK" height:18 width:75 align:#right
 			label lbl_presets "Presets" align:#left
 			button p1 "0.63" across:6
@@ -40,9 +41,9 @@ macroScript HAG_CamMngr
 			button p3 "1.00"
 			button p4 "1.33"
 			button p5 "1.60"
-			button p6 "2.00"			
+			button p6 "2.00"
 		)
-		
+
 		group "Batch views"
 		(
 			listbox lst_2 "Batch Views" height:5
@@ -55,9 +56,9 @@ macroScript HAG_CamMngr
 			tooltip:"Set active render output size as view override"
 			button btn_v "Add View to batch" width:(roll_w - 70) height:25 align:#left
 		)
-		
-		button btn_bup "Refresh" width:(roll_w - 70) height:25 align:#left		
-		button btn_b "Open Batch window" width:(roll_w - 70) height:25 align:#left	
+
+		button btn_bup "Refresh" width:(roll_w - 70) height:25 align:#left
+		button btn_b "Open Batch window" width:(roll_w - 70) height:25 align:#left
 		--------------------------------
 		local active_cam
 		local list_cam
@@ -76,11 +77,11 @@ macroScript HAG_CamMngr
 		/* CHANGE RENDER OUTPUT */
 		fn set_output_res_ratio val =
 		(
-			rendImageAspectRatio = val			
-			
+			rendImageAspectRatio = val
+
 			spn_1.value = renderWidth
 			spn_2.value = renderHeight
-			
+
 			if renderSceneDialog.isOpen() then renderSceneDialog.update()
 		)
 		fn set_output_res w h =
@@ -103,12 +104,12 @@ macroScript HAG_CamMngr
 				local cam = cameras[i]
 				#(cam, cam.name)
 			)
-		)		
+		)
 		fn relist_cams =
 		(
 			list_cam = listCameras()
 			local only_names = for i in list_cam where (isKindOf i[1] camera) collect i[2]
-			local only_cams = for i in list_cam where (isKindOf i[1] camera) collect i[1] 
+			local only_cams = for i in list_cam where (isKindOf i[1] camera) collect i[1]
 			lst_1.items = only_names
 		)
 		/* GET THE ACTIVE CAMERA */
@@ -122,7 +123,7 @@ macroScript HAG_CamMngr
 		fn setActiveCam n =
 		(
 			if n != undefined then (
-				local cam = if (isKindOf n string) then ( getNodeByName n) else n					
+				local cam = if (isKindOf n string) then ( getNodeByName n) else n
 				if isValidNode cam and (isKindOf cam camera) then viewport.SetCamera cam
 				change_active()
 			)
@@ -144,7 +145,7 @@ macroScript HAG_CamMngr
 		fn view_settings =
 		(
 			/*
-			local temp_cam = undefined			
+			local temp_cam = undefined
 			case rd_1.state of (
 				-- Active camera
 				(1):(temp_cam = active_cam)
@@ -155,15 +156,15 @@ macroScript HAG_CamMngr
 			local temp_cam = active_cam
 			if (temp_cam != undefined) then (
 				txt_1.text = temp_cam.name + "-" + (rendImageAspectRatio as string)
-					
+
 				if (view_path != undefined) then (
-					
+
 					local root = getFilenamePath view_path
 					local type = getFilenameType view_path
 					local filename = filenameFromPath view_path
 
 					local comp_filename = temp_cam.name + type
-					
+
 					for i in list_cam do (
 						local n = i[2]
 						local f = matchPattern filename pattern:("*"+n+"*")
@@ -173,7 +174,7 @@ macroScript HAG_CamMngr
 							exit
 						)
 					)
-					-- compose Path				
+					-- compose Path
 					view_path = pathConfig.appendPath root comp_filename
 					update_Path()
 				)
@@ -189,7 +190,7 @@ macroScript HAG_CamMngr
 				local st = if the_view.enabled then "[x] " else "[o] "
 				st+the_view.name
 			)
-			lst_2.items = col			
+			lst_2.items = col
 		)
 		/* ADD VIEW */
 		fn view_add =
@@ -213,9 +214,9 @@ macroScript HAG_CamMngr
 					)
 					new_view.name = txt_1.text
 					new_view.outputFilename = view_path
-					
+
 					list_views()
-					
+
 				) else messageBox "View Already exist.\nChange name and try again."
 			)
 		)
@@ -235,7 +236,7 @@ macroScript HAG_CamMngr
 				if the_view.overridePreset then (
 					renderWidth = the_view.width
 					renderHeight = the_view.height
-					get_output_values()					
+					get_output_values()
 				)
 				CompleteRedraw()
 			)
@@ -284,14 +285,14 @@ macroScript HAG_CamMngr
 		on spn_1 changed val do (
 			if chk_ratio.checked then spn_2.value = floor(val/spn_3.value)
 			set_output_res val undefined
-		)		
+		)
 		on spn_2 changed val do (
 			set_output_res undefined val
 			if chk_ratio.checked then  spn_1.value = floor(val*spn_3.value)
-		)		
+		)
 		on spn_3 changed val do (
 			set_output_res_ratio val
-		)		
+		)
 		/* IMAGE RATIO PRESETS */
 		on p1 pressed do (
 			spn_3.value = execute p1.text
@@ -316,8 +317,8 @@ macroScript HAG_CamMngr
 		on p6 pressed do (
 			spn_3.value = execute p6.text
 			set_output_res_ratio (spn_3.value)
-		)		
-		/* GET BATCH VIEW PARAMS */		
+		)
+		/* GET BATCH VIEW PARAMS */
 		on lst_2 selected item do (
 			get_view_params item
 		)

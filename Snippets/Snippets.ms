@@ -1,6 +1,15 @@
 (
+	/* SELECT ALL NODES INSIDE A OPEN CONTAINER*/
+	fn cont_content c =
+	(
+		if isKindOf c Container then (
+			local nd
+			c.GetContentNodes true &nd
+			selectMore nd
+		)
+	)
 	/* LIST NODE PROPERTIES */
-	fn props_lister obj = 
+	fn props_lister obj =
 	(
 		ClearListener()
 		p_names = getPropNames obj
@@ -13,7 +22,7 @@
 		if not(LayerManager.getLayerFromName layerName) then
 		(
 			local refLay = LayerManager.newLayerFromName layerName
-			refLay.showFrozenInGray=false 
+			refLay.showFrozenInGray=false
 			refLay.renderable =false
 			refLay.lock=true
 			try (refLay.addNode obj) catch ()
@@ -66,7 +75,7 @@
 			for i=1 to objsel.count do (
 				objsel[i].gbufferChannel = i
 			)
-			
+
 		)
 	)
 	/* SELECT ALL NODES WHITOUT MATERIAL*/
