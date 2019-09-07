@@ -4,6 +4,6 @@ macroScript HAG_AdvPathMngr
 	toolTip:"Advanced User Paths manager"
 (
 	on execute do (
-	filein("$userScripts/HAG tools/HAG_AdvPathMngr.ms");
+	filein("$scripts/HAG tools/HAG_AdvPathMngr.ms");
 	)
 )
