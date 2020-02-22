@@ -1,5 +1,14 @@
+/*
+------------------------------------------------------------------------------------------------------------------
+https://atelierbump.com
+Change gamma of normal maps - works with standard and Vray Normal maps.
+------------------------------------------------------------------------------------------------------------------
+*/
+macroScript HAG_changeGamma
+	category:"HAG tools"
+	ButtonText:"NRMGAMMA"
+	toolTip:"Change gamma of normal maps - works with standard and Vray Normal maps"
 (
-	try(destroydialog ::roll_gamma) catch() 
 	rollout roll_gamma "Normal Maps gamma" height:220
 	(
 		group "Map type"
@@ -24,10 +33,10 @@
 			local tot_progress
 			with redraw off
 			(
-				undo "Normal Maps Gamma" on 
+				undo "Normal Maps Gamma" on
 				(
 					if normal_maps.count > 0 then (
-						tot_progress = 100.0 / normal_maps.count 
+						tot_progress = 100.0 / normal_maps.count
 						for i=1 to normal_maps.count do (
 							if progress != unsupplied then progress = (i * tot_progress) as Integer
 						--	/*
@@ -65,5 +74,7 @@
 			prg_1.value = 100
 		)
 	)
-	CreateDialog ::roll_gamma
+	on isEnabled do roll_gamma.open
+	on execute do CreateDialog roll_gamma
 )
+

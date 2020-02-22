@@ -1,26 +1,15 @@
+/*
+	HAG 2016
+	22-05-16
+	Vertex Scrambler
+	v. 1.0.0
+	http://www.scriptspot.com/users/ariel-g
+*/
+macroScript HAG_vrtxScr
+	category:"HAG tools"
+	ButtonText:"VSC"
+	toolTip:"Vertex Scrambler"
 (
-	/*
-		HAG 2016
-		22-05-16
-		Vertex Scrambler
-		v. 1.0.0
-		http://www.scriptspot.com/users/ariel-g
-	*/
-	local
-		downlimit,
-		uplimit,
-		obj,
-		vert_sel,
-		vert_pos
-	fn vertScramble o vs d_l u_l soft_s:false =
-	(
-		local vc = for i in vs collect random d_l u_l
-		polyop.moveVert obj vs vc useSoftSel:soft_s
-	)
-	fn vertUnScramble o vs vo =
-	(
-		polyop.setVert o vs vo
-	)
 	rollout roll_vertScramble "Vertex Scramble" width:200
 	(
 		label lbl_1 "OFFSET" align:#left
@@ -37,18 +26,52 @@
 		button btn_Sc "Scramble" width:190 height:30
 		button btn_unS "UnScramble" width:190 height:30
 		checkButton chk_live "Live" width:190 height:20
-		
-		fn scrambler = 
+
+		local
+		downlimit,
+		uplimit,
+		obj,
+		vert_sel,
+		vert_pos
+
+		fn vertScramble o vs d_l u_l soft_s:false =
+		(
+			local vc = for i in vs collect random d_l u_l
+			polyop.moveVert obj vs vc useSoftSel:soft_s
+		)
+
+		fn vertUnScramble o vs vo =
+		(
+			polyop.setVert o vs vo
+		)
+
+		fn scrambler =
 		(
 			undo "vertex scramble" on (
 				vertUnScramble obj vert_sel vert_pos
 				vertScramble obj vert_sel downlimit uplimit soft_s:(chk_sfts.state)
 			)
 		)
+		fn vert_sc =
+		(
+			obj = $
+			if isKindOf tempsel Editable_Poly then (
+				if not (polyop.getVertSelection obj).isEmpty then (
+					vert_sel = polyop.getVertSelection obj
+					vert_pos = for i in vert_sel collect ( polyop.getVert obj i)
+				) else (messageBox "Select some Vertex!"; DestroyDialog roll_vertScramble)
+
+			) else (messageBox "Select EditPoly Object!"; DestroyDialog roll_vertScramble)
+		)
+
 		on roll_vertScramble open do (
+			vert_sc()
+
 			downlimit = [spn_dwX.value, spn_dwY.value, spn_dwZ.value]
 			uplimit = [spn_upX.value, spn_upY.value, spn_upZ.value]
+
 		)
+
 		on spn_dwX changed val do (downlimit.x = val; if chk_live.state then ( scrambler() ))
 		on spn_dwY changed val do (downlimit.y = val; if chk_live.state then ( scrambler() ))
 		on spn_dwZ changed val do (downlimit.z = val; if chk_live.state then ( scrambler() ))
@@ -58,19 +81,6 @@
 		on btn_Sc pressed do ( scrambler() )
 		on btn_unS pressed do ( vertUnScramble obj vert_sel vert_pos )
 	)
-	fn vert_sc =
-	(
-		local tempsel = $
-		if isKindOf tempsel Editable_Poly then (
-			obj = tempsel
-			if not (polyop.getVertSelection obj).isEmpty then (
-				vert_sel = polyop.getVertSelection obj
-				vert_pos = for i in vert_sel collect ( polyop.getVert obj i)
-				
-				CreateDialog roll_vertScramble
-			) else (messageBox "Select some Vertex!")
-				
-		) else (messageBox "Select EditPoly Object!")
-	)
-	vert_sc()
+	on isEnabled do roll_vertScramble.open
+	on execute do CreateDialog roll_vertScramble
 )
