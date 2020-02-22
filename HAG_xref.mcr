@@ -1,5 +1,6 @@
 /*
 ------------------------------------------------------------------------------------------------------------------
+https://atelierbump.com
 Xref Object Utilities
 ------------------------------------------------------------------------------------------------------------------
 */
@@ -25,16 +26,16 @@ macroScript	HAG_toXref
 		)
 	)
 	-----------------------------------------
-	fn setXrefRecord obj filename deleteRef:true = 
+	fn setXrefRecord obj filename deleteRef:true =
 	(
 		if (not (isValidNode obj)) AND (not (doesFileExist filename)) then return false
-		
+
 		local xrefRecord
 		local the_nodes = #()
-			
+
 		with redraw off (
-			-- load XrefObject				
-			xrefRecord = objXRefMgr.AddXRefItemsFromFile filename xrefOptions:#(#selectnodes)				
+			-- load XrefObject
+			xrefRecord = objXRefMgr.AddXRefItemsFromFile filename xrefOptions:#(#selectnodes)
 			if xrefRecord  == undefined then return false
 			-- check for xref existence ?
 			if (xrefRecord.Update()) then (
@@ -42,10 +43,10 @@ macroScript	HAG_toXref
 				-- get items
 				xrefRecord.GetItems #XRefObjectType &xrefItems
 				if xrefItems  == undefined then return false
-				-- get nodes					
+				-- get nodes
 				for itm in xrefItems where (isKindOf itm XRefObject) do (
 					itm.getNodes &nodelist
-					join the_nodes nodelist				
+					join the_nodes nodelist
 				)
 				place the_nodes obj.pos
 			)
