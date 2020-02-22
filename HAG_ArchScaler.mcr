@@ -1,7 +1,7 @@
 /*
 ------------------------------------------------------------------------------------------------------------------------------------
 https://atelierbump.com
-Small utility to rescale nodesusing an architectural scale factor.
+Small utility to rescale nodes using an architectural scale factor.
 20-22-2020
 ------------------------------------------------------------------------------------------------------------------------------------
 */
@@ -9,7 +9,7 @@ Small utility to rescale nodesusing an architectural scale factor.
 macroScript HAG_units
 	category:"HAG tools"
 	buttontext:"ArchScaler"
-	tooltip:"Small utility to rescale nodesusing an architectural scale factor."
+	tooltip:"Small utility to rescale nodes using an architectural scale factor."
 (
 	rollout roll_archsc "ArchScale"
 	(

@@ -23,7 +23,7 @@
 | HAG_extras.mcr | Incremental Isolation | re-Isolate current selection.
 | HAG_NrmMap_gamma.ms | | Convert Normal Maps gamma
 | HAG_xref.mcr | Replace with Xref | Replace selected node with Xref Record.
-| HAG_ArchScaler.mcr | Architecture Scale | Small utility to rescale nodesusing an architectural scale factor.
+| HAG_ArchScaler.mcr | Architecture Scale | Small utility to rescale nodes using an architectural scale factor.
 | .\DesignToolBox support | | Support scripts for **DesignToolBox** *(commercial plug-in)*
 
 ## MCG solutions
