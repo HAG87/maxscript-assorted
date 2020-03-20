@@ -1,4 +1,15 @@
 (
+	fn getViewDirectionRay =
+	(
+		-- The affine TM transforms from world coords to view coords
+		-- so we need the inverse of this matrix
+		local coordSysTM = Inverse(getViewTM())
+		-- The Z axis of this matrix is the view direction.
+		local viewDir = -coordSysTM.row3
+		-- get the view position from this matrix
+		local viewPt = coordSysTM.row4
+		return ray viewPt viewDir
+	)
 	/* SELECT ALL NODES INSIDE A OPEN CONTAINER*/
 	fn cont_content c =
 	(
