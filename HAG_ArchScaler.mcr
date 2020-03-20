@@ -79,6 +79,6 @@ macroScript HAG_units
 			scaler ( spn_3.value / spn_4.value as float )
 		)
 	)
-	on isEnabled do roll_archsc.open
+	on isEnabled do not roll_archsc.open
 	on execute do CreateDialog roll_archsc
 )
