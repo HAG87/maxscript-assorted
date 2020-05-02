@@ -1,18 +1,59 @@
 (
+
+	rollout roll_PathEdit "Add Paths" width:500 height:300
+	(
+		local owner = if owner != undefined then owner
+		local stored_values
+		label lbl1 "Enter a list of paths separated by semicolons (;)"
+		edittext txt1 height:230
+		button btn1 "Commit"  width:150 height:30
+		fn stringparser str =
+		(
+			local stream = str as StringStream
+			seek stream 0
+			--readValue stream ignoreStringEscapes:true
+			local pathsCol = #()
+			while not eof stream do (
+				local the_path = readDelimitedString stream ";"
+				if pathConfig.isLegalPath the_path then (
+					append pathsCol the_path
+				) else (
+					-- attemp to validate the path
+					local resolved_path = pathConfig.resolvePathSymbols p
+					if pathConfig.isLegalPath resolved_path then (
+						append pathsCol the_path
+					)
+				)
+			)
+			-- ensure unique paths
+			makeUniqueArray pathsCol
+			-- return the paths
+			pathsCol
+		)
+		on btn1 pressed do (
+			-- commit paths
+			local paths = stringparser txt1.text
+			if paths.count > 0 then stored_values = paths
+			-- exit dialog
+			DestroyDialog roll_pathEdit
+		)
+	)
+
 	rollout roll_mPath "Advanced External Files (User Paths) Manager" width:1000 --height:400
 	(
 		dotNetControl lst_mPath "ListView" height:300
-		button btn_1 "Change / Resolve" width:150 align:#left across:4
-		button btn_3 "Add" width:150 offset:[-80,0] align:#left
-		button btn_2 "Remove" width:150 offset:[-160,0] align:#left
+		button btn_1 "Change / Resolve" width:150 align:#left across:5
+		button btn_3 "Brownse..." width:150  align:#left
+		button btn_8 "Paste..."  width:150  align:#left
+		button btn_2 "Remove" width:150  align:#left
 		checkbutton btn_4 "Show Only Invalids" align:#right
-		
+
 		checkBox chk_sb "Sub-Directories search filter" align:#left checked:true across:2
 		editText txt_filter "Pattern: " Text:"#(\"map*\",\"texture*\")" align:#right
-		
+
 		imgTag sep1 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
 		button btn_7 "Remove ..." width:150 align:#left across:6
-		checkbox chk_1 "Empty folders" checked:true width:80 align:#right 
+		checkbox chk_1 "Empty folders" checked:true width:80 align:#right
 		checkbox chk_2 "Not Images" width:80 align:#right
 		checkbox chk_3 "Not Models" width:80 align:#right
 		checkbox chk_4 "Other (specify):" align:#right
@@ -24,8 +65,8 @@
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local only_invalid = false
 		--
-		local temp_paths = #()
-		local add_paths = #()
+		local temp_paths   = #()
+		local add_paths    = #()
 		local remove_paths = #()
 		--
 		local temp_listItemsCol
@@ -35,17 +76,17 @@
 		local md_ext = #(".3ds",".max",".obj",".fbx",".iges",".dwg",".dxf",".rvt",".skp")
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local dotNetLstViewItemClass = dotNetClass "System.Windows.Forms.ListViewItem"
-		local dotNetLstViewClass = dotNetClass "System.Windows.Forms.ListView"
-		local dotNetColor = dotNetClass "System.Drawing.Color"
-		local dotNetFont = dotNetClass "System.Drawing.Font"
-		local font_underline = (dotNetClass "System.Drawing.FontStyle").Underline
-		local font_bold = (dotNetClass "System.Drawing.FontStyle").Bold
-		local font_strk = (dotNetClass "System.Drawing.FontStyle").Strikeout
-		local font_reg = (dotNetClass "System.Drawing.FontStyle").Regular
-		local folder_dialog = dotnetobject "FolderBrowserDialog"
-		local dotNetDirectory = dotnetclass "System.IO.Directory"
-		local DirectorySearch = (dotNetClass"System.IO.SearchOption").AllDirectories
-		local dotNetSort = dotNetClass "System.Windows.Forms.SortOrder"
+		local dotNetLstViewClass     = dotNetClass "System.Windows.Forms.ListView"
+		local dotNetColor            = dotNetClass "System.Drawing.Color"
+		local dotNetFont             = dotNetClass "System.Drawing.Font"
+		local font_underline         = (dotNetClass "System.Drawing.FontStyle").Underline
+		local font_bold              = (dotNetClass "System.Drawing.FontStyle").Bold
+		local font_strk              = (dotNetClass "System.Drawing.FontStyle").Strikeout
+		local font_reg               = (dotNetClass "System.Drawing.FontStyle").Regular
+		local folder_dialog          = dotnetobject "FolderBrowserDialog"
+		local dotNetDirectory        = dotnetclass "System.IO.Directory"
+		local DirectorySearch        = (dotNetClass"System.IO.SearchOption").AllDirectories
+		local dotNetSort             = dotNetClass "System.Windows.Forms.SortOrder"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -73,7 +114,7 @@
 		-- Retrieve subdirectorries
 		fn GetAllSubDirs MyDirectory _filter:#("map*","texture*") =
 		(
-			local curr_folder = 
+			local curr_folder =
 				if _filter != unsupplied then (
 					local temp = #()
 					for i in _filter do ( join temp (dotNetDirectory.GetDirectories MyDirectory i DirectorySearch) )
@@ -85,7 +126,7 @@
 			temp = #(),
 			s = 1,
 			folders = getDirectories (MyDirectory + "/*"),
-			t = folders.count	
+			t = folders.count
 			while s < t do
 			(
 				for i = s to t do (
@@ -162,7 +203,7 @@
 			the_item.text = pathConfig.stripPathToLeaf new_path
 			the_subitems.item[1].text = new_path
 			the_subitems.item[2].text = (getFiles (pathConfig.appendPath new_path "*.*")).count as string
-			the_subitems.item[3].text = 
+			the_subitems.item[3].text =
 			if (dotNetDirectory.exists new_path) then (
 				the_item.ForeColor = dotNetColor.seagreen
 				"OK"
@@ -209,7 +250,27 @@
 			--local itms_count = lst_mPath.SelectedItems.count
 			--if itms_count == 1 then ()
 			local the_item_path = itms[0].Subitems.Item[1].text
-			DOSCommand ("explorer " + "\"" + the_item_path + "\"")			
+			DOSCommand ("explorer " + "\"" + the_item_path + "\"")
+		)
+		-- add subpaths and filters .. add to list
+		fn path_adder paths =
+		(
+			local paths_proccess = copy paths
+			local the_filter = if chk_sb.state then (execute txt_filter.text) else unsupplied
+			local subdirs = queryBox "Add subfolders too?"
+
+			for the_path in paths do (
+				if subdirs then (
+					join paths_proccess (
+						GetAllSubDirs the_path _filter:the_filter
+					)
+				)
+			)
+			-- add to temp results
+			join add_paths the_paths
+			-- add to list
+			lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
+			OK
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Initialize
@@ -221,7 +282,7 @@
 			lst_mPath.view = (dotNetClass "system.windows.forms.view").details
 			--Set so full width of listView is selected and not just first column.
 			lst_mPath.FullRowSelect = true
-			--Show lines between the items. 
+			--Show lines between the items.
 			lst_mPath.GridLines = true
 			--Allow for multiple selections.
 			lst_mPath.MultiSelect = true
@@ -234,9 +295,9 @@
 			-- turn off the grid lines
 			lst_mPath.gridLines = false
 			-- When this ListView loses the focus, it will still show what's selected
-			lst_mPath.HideSelection = false 
+			lst_mPath.HideSelection = false
 			-- make the border a flat solid color instead of the Windows 3D look
-			lst_mPath.BorderStyle = lst_mPath.BorderStyle.FixedSingle 
+			lst_mPath.BorderStyle = lst_mPath.BorderStyle.FixedSingle
 			-- required in order to implement DotNet drag and drop functionality
 			lst_mPath.allowDrop = true
 			-- Items Sort
@@ -273,7 +334,7 @@
 				)
 			)
 		)
-		-- Remove items		
+		-- Remove items
 		on btn_2 pressed do
 		(
 			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
@@ -293,25 +354,23 @@
 				)
 			)
 		)
+		-- paste paths string
+		on btn_8 pressed do (
+			local roll = roll_PathEdit 
+			createDialog roll modal:true
+			local response = roll.stored_values
+			if isKindOf response Array then (
+				-- commit the paths
+				path_adder response
+			)
+		)
 		-- add items
 		on btn_3 pressed do
 		(
 			local res = folder_dialog.showDialog()
 			local the_path = folder_dialog.SelectedPath
-			if the_path != "" then (
-				local the_paths = #(the_path)
-				if (queryBox "Add subfolders too?") then join the_paths (
-					if chk_sb.state then (						
-						GetAllSubDirs the_path _filter:(execute txt_filter.text)	
-					) else (
-						GetAllSubDirs the_path _filter:unsupplied
-					)
-				)
-				-- add to temp results
-				join add_paths the_paths
-				-- add to list
-				lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
-			)
+			
+			if the_path != "" then path_adder #(the_path)
 		)
 		-- invalid paths filter
 		on btn_4 changed state do
@@ -319,7 +378,7 @@
 			if state then (
 				items_col = lst_mPath.Items
 				temp_listItemsCol = for i= 0 to (items_col.count)-1 where (items_col.Item[i].Subitems.Item[3].text == "OK") collect items_col.Item[i]
-				local temp_items = 
+				local temp_items =
 				for i = (items_col.count)-1 to 0 by -1 where (items_col.Item[i].Subitems.Item[3].text != "OK") collect (items_col.Item[i].Clone())
 				lst_mPath.Items.Clear()
 				lstV_addItem lst_mPath temp_items
@@ -336,7 +395,7 @@
 			-- local proc_array = temp_paths + add_paths REPLACE TEMP PATHS
 			local origin_paths = deepcopy temp_paths
 			join origin_paths add_paths
-			
+
 			local filenames =
 			for f=1 to origin_paths.count collect (
 				local temp = getfiles (origin_paths[f] + "\\*.*")
