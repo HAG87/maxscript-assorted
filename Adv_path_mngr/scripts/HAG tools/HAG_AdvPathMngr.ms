@@ -255,17 +255,18 @@
 		-- add subpaths and filters .. add to list
 		fn path_adder paths =
 		(
-			local paths_proccess = copy paths
+			local the_paths = deepcopy paths
 			local the_filter = if chk_sb.state then (execute txt_filter.text) else unsupplied
 			local subdirs = queryBox "Add subfolders too?"
 
 			for the_path in paths do (
 				if subdirs then (
-					join paths_proccess (
+					join the_paths (
 						GetAllSubDirs the_path _filter:the_filter
 					)
 				)
 			)
+			-- format "%\n" paths_proccess 
 			-- add to temp results
 			join add_paths the_paths
 			-- add to list
@@ -359,6 +360,7 @@
 			local roll = roll_PathEdit 
 			createDialog roll modal:true
 			local response = roll.stored_values
+			-- print response
 			if isKindOf response Array then (
 				-- commit the paths
 				path_adder response
