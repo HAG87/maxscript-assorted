@@ -16,7 +16,7 @@ macroscript HAG_vpComp
 			button place2 "Vertical" width:60 height:40
 			button place3 "Cross" width:60 height:40
 		)
-		colorPicker c1 "Guides Color" height:20 fieldwidth:30 align:#right default:yellow 
+		colorPicker c1 "Guides Color" height:20 fieldwidth:30 align:#right default:yellow
 		------------------------------
 		-- store values
 		local Guide_Lines, drawingLines
@@ -28,13 +28,13 @@ macroscript HAG_vpComp
 		(
 			local viewSize_x = gw.getWinSizeX applyUIScaling:UIScaling
 			local viewSize_y = gw.getWinSizeY applyUIScaling:UIScaling
-			
+
 			local viewAspect =  (viewSize_x as float / viewSize_y)
 			local renderAspect =  (renderWidth as float / renderHeight)
 
 			local x, y, w, h
 			if (viewAspect > renderAspect) then
-			(       
+			(
 				h = viewSize_y
 				w = (h * renderAspect) as integer
 				y = 0
@@ -45,7 +45,7 @@ macroscript HAG_vpComp
 				w = viewSize_x
 				h = (w / renderAspect) as integer
 				x = 0
-				y = (viewSize_y - h) / 2        
+				y = (viewSize_y - h) / 2
 			)
 			return box2 x y w h
 		)
@@ -79,7 +79,7 @@ macroscript HAG_vpComp
 			--	mouse.posUnscaled
 			Track_point = tracker mouse.pos Store_Point axis:args
 			redrawViews()
-			
+
 			case msg of
 			(
 				#mouseAbort: undefined
@@ -99,19 +99,17 @@ macroscript HAG_vpComp
 			resH, resV,
 			dx, dy,
 			fx, fy
-			--local vpSize = 
+			--local vpSize =
 			if (displaySafeFrames) then (
 				local vpSize = getViewportSafeFrameSize UIScaling:UIScaling
 				--	Hdiv = floor ((vpSize.h + vpSize.y) / h)
 				--	Vdiv = floor ((vpSize.w + vpSize.x) / v)
-				--	dx = vpSize.x + vpSize.w 
-				--	dy = vpSize.y + vpSize.h
-				dx = vpSize.w + vpSize.x
-				dy = vpSize.h + vpSize.y
+				dx = vpSize.w
+				dy = vpSize.h
 				fx = vpSize.x
 				fy = vpSize.y
 			) else (
-				
+
 				local viewSize_x = gw.getWinSizeX applyUIScaling:UIScaling
 				local viewSize_y = gw.getWinSizeY applyUIScaling:UIScaling
 				--	Hdiv = floor ( viewSize_y as float / h)
@@ -128,16 +126,16 @@ macroscript HAG_vpComp
 				#(
 					-- mapScreenToView [0, Hdiv * ih] 1 applyUIScaling:UIScaling,
 					-- mapScreenToView [dx, Hdiv * ih] 1 applyUIScaling:UIScaling
-					[fx, Hdiv * ih, 0],
-					[fx + dx, Hdiv * ih, 0]
+					[0, Hdiv * ih, 0] + [fx, fy, 0],
+					[dx, Hdiv * ih, 0] + [fx, fy, 0]
 				)
 			)
 			resV = for iv=1 to (v - 1) collect (
 				#(
 					-- mapScreenToView [Vdiv * iv, 0] 1 applyUIScaling:UIScaling,
 					-- mapScreenToView [Vdiv * iv, dy] 1 applyUIScaling:UIScaling
-					[Vdiv * iv, fy, 0],
-					[Vdiv * iv, fy + dy, 0]
+					[Vdiv * iv, 0, 0] + [fx, fy, 0],
+					[Vdiv * iv, dy, 0] + [fx, fy, 0]
 				)
 			)
 			join resH resV
@@ -163,7 +161,7 @@ macroscript HAG_vpComp
 		(
 			local mPoint
 			local res
-			
+
 			local viewSize_x = gw.getWinSizeX applyUIScaling:UIScaling
 			local viewSize_y = gw.getWinSizeY applyUIScaling:UIScaling
 			-- save resources: store the wp size
@@ -207,7 +205,7 @@ macroscript HAG_vpComp
 					redrawViews()
 				)
 				catch (
-					unregisterRedrawViewsCallback GW_GridCallback 
+					unregisterRedrawViewsCallback GW_GridCallback
 					format (getCurrentException())
 				)
 			) else (
@@ -247,13 +245,13 @@ macroscript HAG_vpComp
 		-- draw cross lines
 		on place3 pressed do ( drawLines #xy )
 	)
-	
+
 	on isChecked do if compGuide != undefined then compGuide.open else false
-	
+
 	on execute do (
 		try (
 			if not compGuide.open then CreateDialog compGuide
-			
+
 		) catch (
 			DestroyDialog compGuide
 			CreateDialog compGuide
