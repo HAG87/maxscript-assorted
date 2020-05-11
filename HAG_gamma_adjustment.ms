@@ -67,15 +67,20 @@
 	-- change bitmap gamma
 	fn changeBmpGamma bmpTxt gammavalue:1.0 =
 	(
-		local curr_bitmap = bmpTxt.bitmap
-		local new_bitmap = openBitMap curr_bitmap.filename gamma:gammavalue  channels:curr_bitmap.channels
-		setproperty bmpTxt #bitmap new_bitmap
+		try (
+			local curr_bitmap = bmpTxt.bitmap
+			local new_bitmap = openBitMap curr_bitmap.filename gamma:gammavalue channels:curr_bitmap.channels
+			setproperty bmpTxt #bitmap new_bitmap
+		) catch (
+			format "Conversion error: %\m" (getCurrentException())
+		)
 	)
 	-- search function.
 	-- src parameter is the struct with the render engine parameters
 	-- if "mats" is unsupplied it defaults to scene materials
     fn reassignMaps src _gamma:1.0 mats:unsupplied =
     (
+		-- format "%\n" src
 		-- get the material collection
         local mat_loop = if mats == unsupplied then sceneMaterials else mats
 		-- handle Multimaterial and filter collection to valid material class
@@ -122,7 +127,7 @@
 								local thebitmap = getProperty texturenode i[2]
 								if ClassOf thebitmap == Bitmaptexture then (
 									-- CASE_B_1: standard bitmap
-									changeBmpGamma texturenode gammavalue:_gamma
+									changeBmpGamma thebitmap gammavalue:_gamma
 								) else (
 									-- CASE_B_2: render specific bitmap
 									if src.rndrBitmapTexture.count > 1 then (
@@ -140,7 +145,7 @@
 					)
                 )
             )
-			format "-----------\n"
+-- 			format "-----------\n"
         )
     )
 	-------------------------------------------------UI
@@ -177,7 +182,8 @@
 			selected_renderer = selected_renderer()
 			-- execute
 			-- single materials
-			-- reassignMaps selected_renderer _gamma:spn_1.value mats:mats_col
+			reassignMaps selected_renderer _gamma:spn_1.value mats:mats_col
+			-- multi-materials?
 		)
 	)
     -------------------------------------------------EXECUTION - MAUNAL - AUTOMATED IMPLEMENTATION
