@@ -21,7 +21,8 @@
 | HAG_extras.mcr | face by ID | Select Edit Poly faces by materialID.
 | HAG_extras.mcr | Set random IDs |
 | HAG_extras.mcr | Incremental Isolation | re-Isolate current selection.
-| HAG_NrmMap_gamma.ms | | Convert Normal Maps gamma
+| HAG_gamma_adjustment.ms | | Convert Normal Maps gamma
+| HAG_viewPortCompositionGuides.mcr | Display photographic composition guides overlay in viewport.
 | HAG_xref.mcr | Replace with Xref | Replace selected node with Xref Record.
 | HAG_ArchScaler.mcr | Architecture Scale | Small utility to rescale nodes using an architectural scale factor.
 | .\DesignToolBox support | | Support scripts for **DesignToolBox** *(commercial plug-in)*
