@@ -4,7 +4,7 @@
 	(
 		local owner = if owner != undefined then owner
 		local stored_values
-		label lbl1 "Enter a list of paths separated by semicolons (;)"
+		label lbl1 "Enter a list of paths separated by semicolons (;) or New Lines (\n). Paths can be quoted"
 		edittext txt1 height:230
 		button btn1 "Commit"  width:150 height:30
 		fn stringparser str =
@@ -13,20 +13,30 @@
 			seek stream 0
 			--readValue stream ignoreStringEscapes:true
 			local pathsCol = #()
-			while not eof stream do (
-				local the_path = readDelimitedString stream ";"
-				if pathConfig.isLegalPath the_path then (
-					append pathsCol the_path
-				) else (
-					-- attemp to validate the path
-					local resolved_path = pathConfig.resolvePathSymbols p
-					if pathConfig.isLegalPath resolved_path then (
+			try (
+				while not eof stream do (
+					local the_path = readDelimitedString stream ";\n"
+					-- print the_path
+					-- sanitize the strings
+					-- deal with \"\" and "\n"s
+					--if matchPattern the_path pattern:"\""
+					if pathConfig.isLegalPath the_path then (
 						append pathsCol the_path
+					) else (
+						the_path = substituteString the_path "\"" ""
+						the_path = substituteString the_path "'" ""
+						-- just in case
+						the_path = substituteString the_path "\n" ""
+						-- attemp to validate the path
+						local resolved_path = pathConfig.resolvePathSymbols the_path
+						if pathConfig.isLegalPath resolved_path then (
+							append pathsCol the_path
+						)
 					)
 				)
-			)
-			-- ensure unique paths
-			makeUniqueArray pathsCol
+				-- ensure unique paths
+				pathsCol = makeUniqueArray pathsCol
+			) catch (messageBox "Invalid entries!")
 			-- return the paths
 			pathsCol
 		)
@@ -52,8 +62,9 @@
 		editText txt_filter "Pattern: " Text:"#(\"map*\",\"texture*\")" align:#right
 
 		imgTag sep1 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
-		button btn_7 "Remove ..." width:150 align:#left across:6
+		button btn_7 "Remove ..." width:150 align:#left across:7
 		checkbox chk_1 "Empty folders" checked:true width:80 align:#right
+		checkbox chk_dupes "Duplicates" checked:true width:80 align:#right
 		checkbox chk_2 "Not Images" width:80 align:#right
 		checkbox chk_3 "Not Models" width:80 align:#right
 		checkbox chk_4 "Other (specify):" align:#right
@@ -88,6 +99,9 @@
 		local DirectorySearch        = (dotNetClass"System.IO.SearchOption").AllDirectories
 		local dotNetSort             = dotNetClass "System.Windows.Forms.SortOrder"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
+		local validPathColor = dotNetColor.seagreen
+		local invalidPathColor = dotNetColor.Crimson
+		local removedPathColor = dotNetColor.Goldenrod
 		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Compare function used by bsearch:
@@ -143,7 +157,7 @@
 			---	*/
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
-		-- Reaply style
+		-- Re-apply style
 		fn lst_restyle =
 		(
 			local list_items = lst_mPath.Items
@@ -168,6 +182,7 @@
 			lst_restyle()
 			lst.EndUpdate()
 		)
+
 		-- Process paths into ListView items
 		fn parse_items mP_list font: listView:lst_mPath =
 		(
@@ -184,10 +199,10 @@
 					subitems[1] = pathConfig.stripPathToLeaf currpath
 					subitems[2] = currpath
 					subitems[3] = (getFiles (pathConfig.appendPath currpath "*.*")).count as string
-					subitems[4] = if (dotNetDirectory.exists currpath) then (ForeColor = dotNetColor.seagreen; "OK") else (ForeColor = dotNetColor.Crimson;"MISSING")
+					subitems[4] = if (dotNetDirectory.exists currpath) then (ForeColor = validPathColor; "OK") else (ForeColor = invalidPathColor;"MISSING")
 					-- Initialize Item
 					local item = dotNetObject dotNetLstViewItemClass subitems
-					item.tag = i
+					item.tag = currpath
 					item.ForeColor = ForeColor
 					item.BackColor = if (bit.get i 1) then dotNetColor.Transparent else dotNetColor.LightGray
 					if font != unsupplied then item.Font = (dotNetObject dotNetFont (listView.Font) font)
@@ -196,7 +211,7 @@
 			)
 			res_list
 		)
-		-- Update Item
+		-- Update listView Item
 		fn update_item the_item new_path =
 		(
 			local the_subitems = the_item.subitems
@@ -205,10 +220,10 @@
 			the_subitems.item[2].text = (getFiles (pathConfig.appendPath new_path "*.*")).count as string
 			the_subitems.item[3].text =
 			if (dotNetDirectory.exists new_path) then (
-				the_item.ForeColor = dotNetColor.seagreen
+				the_item.ForeColor = validpathColor
 				"OK"
 			) else (
-				the_item.ForeColor = dotNetColor.Crimson
+				the_item.ForeColor = invalidPathColor
 				"MISSING"
 			)
 			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else if (pathConfig.isUncPath new_path) then "UNC" else "-"
@@ -224,35 +239,40 @@
 		-- Commit changes to Paths
 		fn commit =
 		(
-			if not (queryBox "Commit changes ?") then return false
-			-- delete items
+			if not (queryBox "Commit changes ?. This could take a while to proccess.") then return false
+			-- remove any dupes
+			remove_paths = makeUniqueArray remove_paths
+			add_paths = makeUniqueArray add_paths
+			-- remove possible delete entry from add entry..
+			add_paths = for i=1 to add_paths.count where (findItem remove_paths add_paths[i] == 0) collect add_paths[i]
+			-- delete entry
 			--	progressStart "Deleting user paths"
-				remove_paths = makeUniqueArray remove_paths
+			try (
 				for r=1 to remove_paths.count do (
-				--	progressUpdate ( r * 100 / rem_count)
+					--	progressUpdate ( r * 100 / rem_count)
 					local f_o = findItem temp_paths remove_paths[r]
 					if f_o != 0 then mapPaths.delete f_o
 				)
+			) catch (messageBox "Unable to remove some paths.")
 			--	progressEnd()
-			-- add items
-			add_paths = makeUniqueArray add_paths
-			local add_count = add_paths.count
-			--	progressStart "Adding user paths"
-				for i=1 to add_count do (
-				--	progressUpdate ( i * 100 / add_count)
-					mapPaths.add add_paths[i]
+			-- add entry
+			try (
+				--	progressStart "Adding user paths"
+				for i=1 to add_paths.count do (
+					--	progressUpdate ( i * 100 / add_count)
+					-- do not add duplicated entries
+					local f_o = findItem add_paths add_paths[i]
+					if f_o == 0 then mapPaths.add add_paths[i]
 				)
-			--	progressEnd()
+				--	progressEnd()
+			) catch (messageBox "unable to add some paths")
 		)
 		fn openDir =
 		(
 			local itms = lst_mPath.SelectedItems.Item
-			--local itms_count = lst_mPath.SelectedItems.count
-			--if itms_count == 1 then ()
-			local the_item_path = itms[0].Subitems.Item[1].text
-			DOSCommand ("explorer " + "\"" + the_item_path + "\"")
+			DOSCommand ("explorer " + "\"" + (itms[0].Subitems.Item[1].text) + "\"")
 		)
-		-- add subpaths and filters .. add to list
+		-- Add to list
 		fn path_adder paths =
 		(
 			local the_paths = deepcopy paths
@@ -266,7 +286,6 @@
 					)
 				)
 			)
-			-- format "%\n" paths_proccess 
 			-- add to temp results
 			join add_paths the_paths
 			-- add to list
@@ -313,7 +332,7 @@
 		-- close
 		on roll_mPath close do ( lst_mPath.Dispose(); gc())
 		---------------------------------------------------------------------------------------------------------------------------------------------------- Event handlers
-		-- Change items
+		-- Change entry
 		on btn_1 pressed do
 		(
 			local underline = dotNetObject dotNetFont (lst_mPath.Font) font_underline
@@ -335,7 +354,7 @@
 				)
 			)
 		)
-		-- Remove items
+		-- Remove entry
 		on btn_2 pressed do
 		(
 			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
@@ -346,18 +365,23 @@
 				local the_item = itms[i]
 				local item_path = the_item.Subitems.Item[1].Text
 				local f_d = findItem remove_paths item_path
+
+				local save_color = the_item.ForeColor
+				local save_Font = the_item.Font
 				if f_d == 0 then (
 					the_item.Font = strikeout
+					the_item.ForeColor = removedPathColor
 					appendIfUnique remove_paths item_path
 				) else (
-					the_item.Font = regular
+					the_item.Font = save_Font
+					the_item.ForeColor = save_color
 					deleteItem remove_paths f_d
 				)
 			)
 		)
 		-- paste paths string
 		on btn_8 pressed do (
-			local roll = roll_PathEdit 
+			local roll = roll_PathEdit
 			createDialog roll modal:true
 			local response = roll.stored_values
 			-- print response
@@ -366,12 +390,12 @@
 				path_adder response
 			)
 		)
-		-- add items
+		-- add entry
 		on btn_3 pressed do
 		(
 			local res = folder_dialog.showDialog()
 			local the_path = folder_dialog.SelectedPath
-			
+
 			if the_path != "" then path_adder #(the_path)
 		)
 		-- invalid paths filter
@@ -397,7 +421,7 @@
 			-- local proc_array = temp_paths + add_paths REPLACE TEMP PATHS
 			local origin_paths = deepcopy temp_paths
 			join origin_paths add_paths
-
+			-- search for files in folders
 			local filenames =
 			for f=1 to origin_paths.count collect (
 				local temp = getfiles (origin_paths[f] + "\\*.*")
@@ -407,7 +431,10 @@
 				)
 				ext
 			)
+			-- marked will contain indexes
 			local marked = #()
+			-- dupes will contain paths
+			local dupes =  #()
 			-- empty folders
 			if chk_1.checked then (
 				local empty_folders = #()
@@ -459,16 +486,30 @@
 					join marked other_files
 				)
 			)
-			-- process list
-			local temp_marked = makeUniqueArray marked
-			local paths_list = for g=1 to temp_marked.count collect (
-				local curr_index = temp_marked[g]
-				origin_paths[curr_index]
+			-- duplicates
+			if chk_dupes.checked then (
+				local suspects = deepCopy origin_paths
+				sort suspects
+				-- format "suspects: %\n" suspects
+				dupes = for i=1 to (suspects.count - 1) where (suspects[i] == suspects[i+1]) collect suspects[i]
 			)
+			-- process list
+			-- get paths using collected indexes
+			local str = dotnetclass "system.string"
+
+			local temp_marked = makeUniqueArray marked
+			local paths_list = for g=1 to temp_marked.count collect origin_paths[temp_marked[g]]
+			-- add dupes
+			join paths_list dupes
 			-- find item in list, change item font
 			for i=1 to paths_list.count do (
-				local f_i = lst_mPath.FindItemWithText (paths_list[i])
-				if f_i != undefined then f_i.Font = strikeout
+				local f_i = lst_mPath.FindItemWithText (dotNet.ValueToDotNetObject paths_list[i] str) true 0 false
+
+				if f_i != undefined then (
+					-- format "% || %\n" paths_list[i] f_i.Tag
+					f_i.Font = strikeout
+					f_i.ForeColor = removedPathColor
+				)
 			)
 			-- add to deletion array
 			join remove_paths paths_list
