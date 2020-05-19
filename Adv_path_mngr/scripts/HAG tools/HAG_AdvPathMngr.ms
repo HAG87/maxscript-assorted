@@ -239,34 +239,34 @@
 		-- Commit changes to Paths
 		fn commit =
 		(
-			if not (queryBox "Commit changes ?. This could take a while to proccess.") then return false
+			if not (queryBox "Commit changes ?. This could take a while to process.") then return false
 			-- remove any dupes
 			remove_paths = makeUniqueArray remove_paths
 			add_paths = makeUniqueArray add_paths
 			-- remove possible delete entry from add entry..
 			add_paths = for i=1 to add_paths.count where (findItem remove_paths add_paths[i] == 0) collect add_paths[i]
 			-- delete entry
-			--	progressStart "Deleting user paths"
+			format "Remobing paths from External files list:\n"
 			try (
 				for r=1 to remove_paths.count do (
-					--	progressUpdate ( r * 100 / rem_count)
 					local f_o = findItem temp_paths remove_paths[r]
 					if f_o != 0 then mapPaths.delete f_o
+					format "Removed: \n" remove_paths[r]
 				)
 			) catch (messageBox "Unable to remove some paths.")
-			--	progressEnd()
 			-- add entry
+			format "Adding paths to External files list:\n"
 			try (
 				--	progressStart "Adding user paths"
 				for i=1 to add_paths.count do (
-					--	progressUpdate ( i * 100 / add_count)
+					format "adding: %\n" add_paths[i]
 					-- do not add duplicated entries
-					local f_o = findItem add_paths add_paths[i]
+					local f_o = findItem temp_paths add_paths[i]					
 					if f_o == 0 then mapPaths.add add_paths[i]
 				)
-				--	progressEnd()
 			) catch (messageBox "unable to add some paths")
 		)
+		-- open explorer
 		fn openDir =
 		(
 			local itms = lst_mPath.SelectedItems.Item
