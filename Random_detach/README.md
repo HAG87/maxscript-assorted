@@ -1,1 +1,0 @@
-![Help image](Help.jpg)
