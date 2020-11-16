@@ -4,8 +4,8 @@
 	2020 - https://atelierbump.com
 */
 (
-    -------------------------------------------------CONFIGURATION
-    -- RENDERER PRESETS. ADD YOUR OWN FOLOWING THE SAME PATTERN
+	-------------------------------------------------CONFIGURATION
+	-- RENDERER PRESETS. ADD YOUR OWN FOLOWING THE SAME PATTERN
 	struct _std
 	(
 		mat_filter_class   = PhysicalMaterial,
@@ -62,7 +62,7 @@
 		#("Vray", _Vray),
 		#("Corona", _Corona)
 	)
-    -----------------------------------------------------------------
+	-----------------------------------------------------------------
 	-- MAIN CODE -- DO NOT MODIFY!
 	-- change bitmap gamma
 	fn changeBmpGamma bmpTxt gammavalue:1.0 =
@@ -78,11 +78,11 @@
 	-- search function.
 	-- src parameter is the struct with the render engine parameters
 	-- if "mats" is unsupplied it defaults to scene materials
-    fn reassignMaps src _gamma:1.0 mats:unsupplied =
-    (
+	fn reassignMaps src _gamma:1.0 mats:unsupplied =
+	(
 		-- format "%\n" src
 		-- get the material collection
-        local mat_loop = if mats == unsupplied then sceneMaterials else mats
+		local mat_loop = if mats == unsupplied then sceneMaterials else mats
 		-- handle Multimaterial and filter collection to valid material class
 		local actual_mat_list = #()
 		
@@ -99,19 +99,19 @@
 		-- cleanup
 		makeUniqueArray actual_mat_list
 		
-        -- change the properties
-        for mat in actual_mat_list where (isKindOf mat src.mat_filter_class) do (
+		-- change the properties
+		for mat in actual_mat_list where (isKindOf mat src.mat_filter_class) do (
 
 			format "material: %\n"  mat
 
-            -- check for shader bitmap
-            if (isProperty mat src.bitmap_filter) then (
-                local texturenode = getProperty mat src.bitmap_filter
+			-- check for shader bitmap
+			if (isProperty mat src.bitmap_filter) then (
+				local texturenode = getProperty mat src.bitmap_filter
 
 				format "property: %\n" texturenode
 
-                -- property must not be undefined
-                if (texturenode != undefined) then (
+				-- property must not be undefined
+				if (texturenode != undefined) then (
 					-- check for Bitmaptexture
 					if (ClassOf texturenode == Bitmaptexture) then
 					(
@@ -143,11 +143,11 @@
 							)
 						)
 					)
-                )
-            )
--- 			format "-----------\n"
-        )
-    )
+				)
+			)
+			-- 			format "-----------\n"
+		)
+	)
 	-------------------------------------------------UI
 	rollout roll_normalGamma "Change Normal Maps gamma"
 	(
@@ -186,9 +186,9 @@
 			-- multi-materials?
 		)
 	)
-    -------------------------------------------------EXECUTION - MAUNAL - AUTOMATED IMPLEMENTATION
-    -- default gamma value to apply
-    local _gamma_ = 1.0 -- 2.2
+	-------------------------------------------------EXECUTION - MAUNAL - AUTOMATED IMPLEMENTATION
+	-- default gamma value to apply
+	local _gamma_ = 1.0 -- 2.2
 	-----------------------------------------------------------------
 	-- change maps gamma on scene materials
 	-- set the render engine preset.

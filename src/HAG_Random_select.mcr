@@ -9,6 +9,7 @@ macroScript HAG_RndSel
 	toolTip:      "Select random nodes"
 	silentErrors: true
 (
+	-- Percent: Keep a random percentage of the total quantity of nodes in the current selection.
 	fn rndItemsPercent c p =
 	(
 		local itms_count = floor (c * p) as integer
@@ -24,6 +25,7 @@ macroScript HAG_RndSel
 		sort res
 		res
 	)
+	-- Subtract: Same as percent, but inverse: deselect a random percentage within selection.
 	fn rndItemsSubstr c p =
 	(
 		local itms_count = c - ( ceil (c * p) as integer )
@@ -41,6 +43,7 @@ macroScript HAG_RndSel
 		sort res
 		res
 	)
+	-- Step: Performs a skip pattern in the selection.
 	fn rndItemsStep c s =
 	(
 		local res
@@ -52,6 +55,20 @@ macroScript HAG_RndSel
 		) else ( res = #() )
 		res
 	)
+	--  Pattern: Not a random mode; Instead it wil unselect nodes following a pattern.
+	fn selPattern sel c st qn =
+	(
+		local res = #()
+		local delta = st + qn
+		if delta < c then (
+			for i=1 to (c - delta) by delta do (
+				local tmp = for f = 1 to st collect sel[i+f]
+				join res tmp
+			)
+		)
+		res
+	)
+	-- main UI
 	rollout roll_rndSel "Random selection"
 	(
 		group "Mode"
@@ -76,18 +93,6 @@ macroScript HAG_RndSel
 		local mode = 1,
 		sel, sel_count
 		-----------------------------------------
-		fn selPattern sel c st qn =
-		(
-			local res = #()
-			local delta = st + qn
-			if delta < c then (
-				for i=1 to (c - delta) by delta do (
-					local tmp = for f = 1 to st collect sel[i+f]
-					join res tmp
-				)
-			)
-			res
-		)
 		fn rndSel s c x mode:1  =
 		(
 			local rnd, res
@@ -191,5 +196,8 @@ macroScript HAG_RndSel
 
 		)
 	)
-	CreateDialog roll_rndSel
+
+	on execute do (
+		CreateDialog roll_rndSel
+	)
 )
