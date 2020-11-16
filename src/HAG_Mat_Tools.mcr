@@ -278,7 +278,7 @@ macroScript HAG_qIDSet
 		
 		mapped fn polyID obj id:1 =
 		(
-			if obj !=undefined then (
+			if obj != undefined then (
 				if ((isKindOf obj Editable_Poly) and (subObjectLevel == 4 OR subObjectLevel == 5)) then (
 					local faceCount = polyop.getNumFaces obj
 					local currFace= polyop.getFaceSelection obj
