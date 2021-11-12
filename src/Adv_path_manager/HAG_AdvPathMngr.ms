@@ -76,9 +76,9 @@
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local only_invalid = false
 		--
-		local temp_paths   = #()
-		local add_paths    = #()
-		local remove_paths = #()
+		local TEMP_PATHS   = #()
+		local ADD_PATHS    = #()
+		local REMOVE_PATHS = #()
 		--
 		local temp_listItemsCol
 		----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,25 +139,25 @@
 				) else ( dotNetDirectory.GetDirectories MyDirectory "*" DirectorySearch )
 			curr_folder
 			/*
-			local
-			temp = #(),
-			s = 1,
-			folders = getDirectories (MyDirectory + "/*"),
-			t = folders.count
-			while s < t do
-			(
-				for i = s to t do (
-					temp = getDirectories (folders[i]+"*")
-					-- apply filter
-					for j = 1 to temp.count do folders[folders.count+1] = temp[j]
-				)
-				s = t
+				local
+				temp = #(),
+				s = 1,
+				folders = getDirectories (MyDirectory + "/*"),
 				t = folders.count
-			)
-			sort folders
-			for i=1 to folders.count do (folders[i] = trimRight folders[i] "\\")
-			folders
-			---	*/
+				while s < t do
+				(
+					for i = s to t do (
+						temp = getDirectories (folders[i]+"*")
+						-- apply filter
+						for j = 1 to temp.count do folders[folders.count+1] = temp[j]
+					)
+					s = t
+					t = folders.count
+				)
+				sort folders
+				for i=1 to folders.count do (folders[i] = trimRight folders[i] "\\")
+				folders
+			--	*/
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Re-apply style
@@ -184,7 +184,6 @@
 				lst_restyle()
 			lst.EndUpdate()
 		)
-
 		-- Process paths into ListView items
 		fn parse_items mP_list font: listView:lst_mPath =
 		(
@@ -234,40 +233,56 @@
 		fn Init =
 		(
 			-- Collect user paths
-			temp_paths = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
+			TEMP_PATHS = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
 			-- Process paths into ListView items
-			lstV_addItem lst_mPath (parse_items temp_paths)
+			lstV_addItem lst_mPath (parse_items TEMP_PATHS)
 		)
+		-----------------------------------------------------------------------------------------------
 		-- Commit changes to Paths
 		fn commit =
 		(
+			-- format "%\n" REMOVE_PATHS
+			-- format "%\n" ADD_PATHS
+			
 			if not (queryBox "Commit changes ?. This could take a while to process.") then return false
+			
 			-- remove any dupes
-			remove_paths = makeUniqueArray remove_paths
-			add_paths = makeUniqueArray add_paths
+			REMOVE_PATHS = makeUniqueArray REMOVE_PATHS
+			ADD_PATHS = makeUniqueArray ADD_PATHS
+			
 			-- remove possible delete entry from add entry..
-			add_paths = for i=1 to add_paths.count where (findItem remove_paths add_paths[i] == 0) collect add_paths[i]
+			ADD_PATHS = for i=1 to ADD_PATHS.count where (findItem REMOVE_PATHS ADD_PATHS[i] == 0) collect ADD_PATHS[i]
+			
 			-- delete entry
-			format "Remobing paths from External files list:\n"
+			format "Removing paths from External files list...\n"
 			try (
-				for r=1 to remove_paths.count do (
-					local f_o = findItem temp_paths remove_paths[r]
-					if f_o != 0 then mapPaths.delete f_o
-					format "Removed: \n" remove_paths[r]
-				)
-			) catch (messageBox "Unable to remove some paths.")
+				-- collect the indexes to be removed
+				local rem_idx = for p in REMOVE_PATHS collect findItem TEMP_PATHS p
+				-- descending sort
+				qsort rem_idx invSort
+				-- remove the paths
+				for i in rem_idx where i != 0 do (
+					mapPaths.delete i
+					format "->	%\n" TEMP_PATHS[i]
+				)			
+			) catch (messageBox "Unable to remove some paths."; format "%\n" (getCurrentException()) )
+			
 			-- add entry
-			format "Adding paths to External files list:\n"
+			-- /*
+			format "Adding paths to External files list...\n"
 			try (
 				--	progressStart "Adding user paths"
-				for i=1 to add_paths.count do (
-					format "adding: %\n" add_paths[i]
-					-- do not add duplicated entries
-					local f_o = findItem temp_paths add_paths[i]					
-					if f_o == 0 then mapPaths.add add_paths[i]
+				-- do not add duplicated entries
+				for p in ADD_PATHS where (findItem TEMP_PATHS p) == 0 do (
+					mapPaths.add p
+					format "->	%\n" p
 				)
-			) catch (messageBox "unable to add some paths")
+			) catch (messageBox "unable to add some paths"; format "%\n" (getCurrentException()) )
+			-- */
+			-- update the tool
+			-- Init()
 		)
+		-----------------------------------------------------------------------------------------------
 		-- open explorer
 		fn openDir =
 		(
@@ -275,24 +290,20 @@
 			DOSCommand ("explorer " + "\"" + (itms[0].Subitems.Item[1].text) + "\"")
 		)
 		-- Add to list
-		fn path_adder paths para:meter =
+		fn path_adder paths =
 		(
 			local the_paths = deepcopy paths
 			local the_filter = if chk_sb.state then (execute txt_filter.text) else unsupplied
-			local subdirs = queryBox "Add subfolders too?"
-
-			for the_path in paths do (
-				if subdirs then (
-					join the_paths (
-						GetAllSubDirs the_path _filter:the_filter
-					)
+			if (queryBox "Add subfolders too?") then (
+				for the_path in paths do (
+					join the_paths (GetAllSubDirs the_path _filter:the_filter)
 				)
 			)
 			-- add to temp results
-			join add_paths the_paths
+			join ADD_PATHS the_paths
 			-- add to list
 			lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
-			OK
+			silentValue
 		)
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Initialize
@@ -347,9 +358,9 @@
 				local new_path = folder_dialog.SelectedPath
 				if new_path != "" then (
 					-- add old to remove list
-					appendIfUnique remove_paths (the_item.Subitems.Item[1].text)
+					appendIfUnique REMOVE_PATHS (the_item.Subitems.Item[1].text)
 					-- add new to add list
-					appendIfUnique add_paths new_path
+					appendIfUnique ADD_PATHS new_path
 					-- update listview
 					the_item.Font = underline
 					update_item the_item new_path
@@ -363,23 +374,26 @@
 			local regular = dotNetObject dotNetFont (lst_mPath.Font) font_reg
 			local itms = lst_mPath.SelectedItems.Item
 			local itms_count = lst_mPath.SelectedItems.count
+			
 			for i=0 to itms_count-1 do (
 				local the_item = itms[i]
 				local item_path = the_item.Subitems.Item[1].Text
-				local f_d = findItem remove_paths item_path
+				local f_d = findItem REMOVE_PATHS item_path
 
 				local save_color = the_item.ForeColor
 				local save_Font = the_item.Font
 				if f_d == 0 then (
 					the_item.Font = strikeout
 					the_item.ForeColor = removedPathColor
-					appendIfUnique remove_paths item_path
+					appendIfUnique REMOVE_PATHS item_path
+					
 				) else (
 					the_item.Font = save_Font
 					the_item.ForeColor = save_color
-					deleteItem remove_paths f_d
+					deleteItem REMOVE_PATHS f_d
 				)
 			)
+			-- format "%\n" REMOVE_PATHS
 		)
 		-- paste paths string
 		on btn_8 pressed do (
@@ -420,9 +434,9 @@
 		(
 			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
 			-- collect filenames
-			-- local proc_array = temp_paths + add_paths REPLACE TEMP PATHS
-			local origin_paths = deepcopy temp_paths
-			join origin_paths add_paths
+			-- local proc_array = TEMP_PATHS + ADD_PATHS REPLACE TEMP PATHS
+			local origin_paths = deepcopy TEMP_PATHS
+			join origin_paths ADD_PATHS
 			-- search for files in folders
 			local filenames =
 			for f=1 to origin_paths.count collect (
@@ -514,7 +528,7 @@
 				)
 			)
 			-- add to deletion array
-			join remove_paths paths_list
+			join REMOVE_PATHS paths_list
 		)
 		-- accept
 		on btn_5 pressed do (commit(); DestroyDialog roll_mPath)
