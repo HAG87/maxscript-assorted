@@ -27,6 +27,7 @@
 | Mat_Tools | FaceSel     | Select faces with same material ID
 | Mat_Tools | RndIDSet    | Set random material IDs for selected faces
 | Mat_Tools | QIDSet      | Set material IDs for selected faces
+| Audit-materials | Audit Materials | Filter objects by material
 
 ## MCG solutions
 
