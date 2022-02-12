@@ -1,6 +1,6 @@
 /* https://atelierbump.com ~ MaxScript Snippets */
 --------------------------------------------------------------------------------
-/* GET A RAY PERPENDICULAT TO THE CURRENT VIEW */
+/* GET A RAY PERPENDICULAR TO THE CURRENT VIEW */
 fn getViewDirectionRay =
 (
 	-- The affine TM transforms from world coords to view coords
@@ -130,4 +130,13 @@ mapped fn alignToCPTM obj =
 		--node.transform *= xformmat (scalematrix sc) (inverse spaceTM)
 		--obj.transform = obj.transform * (inverse spaceTM) * (scalematrix sc) * spaceTM
 	)
+)
+--------------------------------------------------------------------------------
+/* bump map multiplier at 100.0 for normal maps */
+-- TODO: Implement for more popular renders and default materials
+(
+	-- for Vray materials only!
+	local mats = getClassInstances VRayMtl
+	mats = makeUniqueArray mats
+	for m in mats where classOf (m.texmap_bump) == VRayNormalMap do m.texmap_bump_multiplier = 100.0m	
 )
