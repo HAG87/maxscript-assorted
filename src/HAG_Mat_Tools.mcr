@@ -15,7 +15,23 @@
 * HAG_qIDSet      | Set material IDs for selected faces
 * HAG_listMtl     | List materials in selection
 */
-
+/* Change mtl bump value */
+macroScript DSTLBX_bumpToOneHundred
+	category:   "HAG tools"
+	ButtonText: "bumpTo100"
+	toolTip:    "Material Bump value to 100"
+(
+	on execute do (
+		local warning = messageBox "Warning! this will change the bump amount value of scene materials. Works only with Vray materials for now"
+		if warning AND VRayMtl != undefined then (
+			-- for Vray materials only!
+			-- TODO: Implement physical, standard, Arnold, Corona...
+			local mats = getClassInstances VRayMtl
+			mats = makeUniqueArray mats
+			for m in mats where classOf (m.texmap_bump) == VRayNormalMap do m.texmap_bump_multiplier = 100.0
+		)
+	)
+)
 /* Load texture maps */
 macroScript HAG_mapLoader
 	category:   "HAG tools"
