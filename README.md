@@ -4,14 +4,14 @@
 
 | File | Name | Description |
 | ---- | ---- | ----------- |
-| ../Max UI                 |                 | 3Ds Max custom dark UI scheme.
-| ./plugins/HAG_Resizer.mse | Resize modifier | Change node XYZ dimensions.
+| ../Max UI                 |                        | 3Ds Max custom dark UI scheme.
+| ./plugins/HAG_Resizer.mse | Resize modifier        | Change node XYZ dimensions.
 | ./usericons               | UI Icons for some of the scripts | Change node XYZ dimensions.
 | Panel_cuts                | Panel cuts             | Tool for creating panel cuts reports. Useful for furniture or cabinets design.
 | Adv_path_mngr             | Advanced Paths Manager | Utility for managing user paths (beta)
 | Random_detach             | Random Detach          | Random detach **editable poly** elements.
 | Random_select             | Random Select          | Random nodes selection.
-| Render_tools              | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios.
+| camManager                | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios.
 | Vertex_scrambler          | Vertex scrambler       | Random shift vertex positions in a mesh.
 | VrayMat_populate          |                        | Populate material editor slots with VRayMtl
 | Align_assets              | Align assets           | Rearrange nodes in a row.
@@ -19,16 +19,16 @@
 | ViewPortCompositionGuides |                        | Display photographic composition guides overlay in viewport.
 | Xref_Replace              | Replace with Xref      | Replace selected node with Xref Record.
 | ArchScaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor.
-| Mat_Tools | MapLoader   | Load multiple bitmapTextures to the slate material editor
-| Mat_Tools | FnameToBMap | Change the names of Bitmap Textures to the name of the loaded files.
-| Mat_Tools | Remove_mats | Remove material from selection
-| Mat_Tools | SelNoMat    | Filter nodes without material in current selection.
-| Mat_Tools | ObjIDbyCAM  | Set objects ID for current camera view
-| Mat_Tools | FaceSel     | Select faces with same material ID
-| Mat_Tools | RndIDSet    | Set random material IDs for selected faces
-| Mat_Tools | QIDSet      | Set material IDs for selected faces
-| Mat_Tools | bumpTo100   | (V-ray) material Bump value to 100.0
-| Audit-materials | Audit Materials | Filter objects by material
+| Mat_Tools                 | MapLoader              | Load multiple bitmapTextures to the slate material editor
+| Mat_Tools                 | FnameToBMap            | Change the names of Bitmap Textures to the name of the loaded files.
+| Mat_Tools                 | Remove_mats            | Remove material from selection
+| Mat_Tools                 | SelNoMat               | Filter nodes without material in current selection.
+| Mat_Tools                 | ObjIDbyCAM             | Set objects ID for current camera view
+| Mat_Tools                 | FaceSel                | Select faces with same material ID
+| Mat_Tools                 | RndIDSet               | Set random material IDs for selected faces
+| Mat_Tools                 | QIDSet                 | Set material IDs for selected faces
+| Mat_Tools                 | bumpTo100              | (V-ray) material Bump value to 100.0
+| Audit-materials           | Audit Materials        | Filter objects by material
 
 ## MCG solutions
 
