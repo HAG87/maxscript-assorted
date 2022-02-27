@@ -16,7 +16,7 @@
 | VrayMat_populate          |                        | Populate material editor slots with VRayMtl
 | Align_assets              | Align assets           | Rearrange nodes in a row.
 | Gamma_adjustment          |                        | Convert Normal Maps gamma
-| ViewPortCompositionGuides |                        | Display photographic composition guides overlay in viewport.
+| Photographic composition guides |                  | Display photographic composition guides overlay in viewport.
 | Xref_Replace              | Replace with Xref      | Replace selected node with Xref Record.
 | ArchScaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor.
 | Mat_Tools                 | MapLoader              | Load multiple bitmapTextures to the slate material editor
