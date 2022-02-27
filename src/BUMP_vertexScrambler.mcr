@@ -1,12 +1,12 @@
 /*
-	HAG 2016
+	BUMP 2016
 	22-05-16
 	Vertex Scrambler
 	v. 1.0.0
 	http://www.scriptspot.com/users/ariel-g
 */
-macroScript HAG_vrtxScr
-	category:"HAG tools"
+macroScript BUMP_vrtxScr
+	category:"BUMP tools"
 	ButtonText:"VSC"
 	toolTip:"Vertex Scrambler"
 (

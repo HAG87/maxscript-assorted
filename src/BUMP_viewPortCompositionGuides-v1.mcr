@@ -2,8 +2,8 @@
 VIEWPORT COMPOSITION GUIDES
 2020
 */
-macroscript HAG_vpComp
-	category:         "HAG tools"
+macroscript BUMP_vpComp
+	category:         "BUMP tools"
 	buttontext:       "viewport Composition guides"
 	tooltip:          "viewport Composition guides"
 (

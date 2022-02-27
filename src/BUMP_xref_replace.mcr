@@ -4,8 +4,8 @@ https://atelierbump.com
 Xref Object Utilities
 ------------------------------------------------------------------------------------------------------------------
 */
-macroScript	HAG_toXref
-	category: "HAG tools"
+macroScript	BUMP_toXref
+	category: "BUMP tools"
 	buttonText: "Replace with Xref"
 	toolTip: "Replace selected node with Xref Record"
 (

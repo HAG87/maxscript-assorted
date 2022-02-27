@@ -3,7 +3,7 @@ VIEWPORT COMPOSITION GUIDES
 2020
 */
 macroscript DSTLBX_vpComp
-	category:         BUMP tools"
+	category:         "BUMP tools"
 	buttontext:       "Photographic composition guides"
 	tooltip:          "Photographic Composition guides"
 (

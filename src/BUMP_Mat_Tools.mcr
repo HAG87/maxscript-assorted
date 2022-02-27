@@ -1,23 +1,23 @@
 /*
 * -------------------------------------------------------------------------------------------------------
 * https://atelierbump.com
-* Category: "HAG tools"
+* Category: "BUMP tools"
 * last updated: 08-10-2019
 * MODIFY AT YOUR OWN RISK
 * -------------------------------------------------------------------------------------------------------
-* HAG_mapLoader   | Load multiple bitmapTextures to the slate material editor
-* HAG_fnameToBMap | Change the names of Bitmap Textures to the name of the loaded files.
-* HAG_remove_mats | Remove material from selection
-* HAG_selNoMat    | Filter nodes without material in current selection.
-* HAG_ObjIDbyCAM  | Set objects ID for current camera view
-* HAG_faceSel     | Select faces with same material ID
-* HAG_RndIDSet    | Set random material IDs for selected faces
-* HAG_qIDSet      | Set material IDs for selected faces
-* HAG_listMtl     | List materials in selection
+* BUMP_mapLoader   | Load multiple bitmapTextures to the slate material editor
+* BUMP_fnameToBMap | Change the names of Bitmap Textures to the name of the loaded files.
+* BUMP_remove_mats | Remove material from selection
+* BUMP_selNoMat    | Filter nodes without material in current selection.
+* BUMP_ObjIDbyCAM  | Set objects ID for current camera view
+* BUMP_faceSel     | Select faces with same material ID
+* BUMP_RndIDSet    | Set random material IDs for selected faces
+* BUMP_qIDSet      | Set material IDs for selected faces
+* BUMP_listMtl     | List materials in selection
 */
 /* Change mtl bump value */
 macroScript DSTLBX_bumpToOneHundred
-	category:   "HAG tools"
+	category:   "BUMP tools"
 	ButtonText: "bumpTo100"
 	toolTip:    "Material Bump value to 100"
 (
@@ -33,8 +33,8 @@ macroScript DSTLBX_bumpToOneHundred
 	)
 )
 /* Load texture maps */
-macroScript HAG_mapLoader
-	category:   "HAG tools"
+macroScript BUMP_mapLoader
+	category:   "BUMP tools"
 	ButtonText: "Bitmap multi-loader"
 	toolTip:    "Load multiple bitmapTextures to the slate material editor"
 (
@@ -118,8 +118,8 @@ macroScript HAG_mapLoader
 	on CloseDialogs do DestroyDialog roll_loadbitmaps
 )
 /* Map - Material related tools */
-macroScript HAG_fnameToBMap
-	category:   "HAG tools"
+macroScript BUMP_fnameToBMap
+	category:   "BUMP tools"
 	buttonText: "Map name from file"
 	toolTip:    "Change the names of Bitmap Textures to the name of the loaded files."
 (
@@ -139,8 +139,8 @@ macroScript HAG_fnameToBMap
 	)
 )
 /* Remove material from selection */
-macroScript HAG_remove_mats
-	category:   "HAG tools"
+macroScript BUMP_remove_mats
+	category:   "BUMP tools"
 	buttonText: "Remove materials"
 	toolTip:    "Remove material from selection"
 (
@@ -156,8 +156,8 @@ macroScript HAG_remove_mats
 	)
 )
 /* Filter nodes without material in current selection. */
-macroScript HAG_selNoMat
-	category:   "HAG tools"
+macroScript BUMP_selNoMat
+	category:   "BUMP tools"
 	buttonText: "Select nodes without material"
 	toolTip:    "Filter nodes without material in current selection."
 (
@@ -174,8 +174,8 @@ macroScript HAG_selNoMat
 	on execute do SelectNoMaterial()
 )
 -- Poly - Node Id related tools
-macroScript HAG_ObjIDbyCAM
-	category:   "HAG tools"
+macroScript BUMP_ObjIDbyCAM
+	category:   "BUMP tools"
 	buttonText: "ID from camera"
 	toolTip:    "Set objects ID for current camera view"
  	icon:      #("Material_Modifiers",2)
@@ -209,8 +209,8 @@ macroScript HAG_ObjIDbyCAM
 	on execute do setObjID()
 )
 /* Select faces with same material ID */
-macroScript HAG_faceSel
-	category:   "HAG tools"
+macroScript BUMP_faceSel
+	category:   "BUMP tools"
 	buttonText: "Face ID"
 	toolTip:    "Select faces with same material ID"
 	icon:       #("UVWUnwrapSelection",12)
@@ -242,8 +242,8 @@ macroScript HAG_faceSel
 	)
 )
 /* Set random material IDs for selected faces */
-macroScript HAG_RndIDSet
-	category:     "HAG tools"
+macroScript BUMP_RndIDSet
+	category:     "BUMP tools"
 	ButtonText:   "Random ID Set"
 	tooltip:      "Set random material IDs for selected faces"
 	silentErrors: true
@@ -265,8 +265,8 @@ macroScript HAG_RndIDSet
 	on execute do try (randMatID $) catch ()
 )
 /* Set material IDs for selected faces */
-macroScript HAG_qIDSet
-	category:     "HAG tools"
+macroScript BUMP_qIDSet
+	category:     "BUMP tools"
 	ButtonText:   "Quick material ID Set"
 	tooltip:      "Set material IDs for selected faces"
 	silentErrors: true
@@ -373,8 +373,8 @@ macroScript HAG_qIDSet
 	)
 )
 /* List materials in selection */
-	macroScript HAG_listMtl
-	category:     "HAG tools"
+	macroScript BUMP_listMtl
+	category:     "BUMP tools"
 	ButtonText:   "List Materials"
 	tooltip:      "List materials of selected nodes"
 	silentErrors: true
@@ -409,7 +409,7 @@ macroScript HAG_qIDSet
 /*
 -- Max UI related tools
 macroScript TrackbarToggle
-	category:   "HAG tools"
+	category:   "BUMP tools"
 	buttonText: "Toggle Trackbar"
 	toolTip:    "Toggle Timeslider and Trackbar"
 	Icon:       #("TrackViewStatus",11)

@@ -4,31 +4,31 @@
 
 | File | Name | Description |
 | ---- | ---- | ----------- |
-| ../Max UI                 |                        | 3Ds Max custom dark UI scheme.
-| ./plugins/HAG_Resizer.mse | Resize modifier        | Change node XYZ dimensions.
-| ./usericons               | UI Icons for some of the scripts | Change node XYZ dimensions.
-| Panel_cuts                | Panel cuts             | Tool for creating panel cuts reports. Useful for furniture or cabinets design.
-| Adv_path_mngr             | Advanced Paths Manager | Utility for managing user paths (beta)
-| Random_detach             | Random Detach          | Random detach **editable poly** elements.
-| Random_select             | Random Select          | Random nodes selection.
-| camManager                | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios.
-| Vertex_scrambler          | Vertex scrambler       | Random shift vertex positions in a mesh.
-| VrayMat_populate          |                        | Populate material editor slots with VRayMtl
-| Align_assets              | Align assets           | Rearrange nodes in a row.
-| Gamma_adjustment          |                        | Convert Normal Maps gamma
-| Photographic composition guides |                  | Display photographic composition guides overlay in viewport.
-| Xref_Replace              | Replace with Xref      | Replace selected node with Xref Record.
-| ArchScaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor.
-| Mat_Tools                 | MapLoader              | Load multiple bitmapTextures to the slate material editor
-| Mat_Tools                 | FnameToBMap            | Change the names of Bitmap Textures to the name of the loaded files.
-| Mat_Tools                 | Remove_mats            | Remove material from selection
-| Mat_Tools                 | SelNoMat               | Filter nodes without material in current selection.
-| Mat_Tools                 | ObjIDbyCAM             | Set objects ID for current camera view
-| Mat_Tools                 | FaceSel                | Select faces with same material ID
-| Mat_Tools                 | RndIDSet               | Set random material IDs for selected faces
-| Mat_Tools                 | QIDSet                 | Set material IDs for selected faces
-| Mat_Tools                 | bumpTo100              | (V-ray) material Bump value to 100.0
-| Audit-materials           | Audit Materials        | Filter objects by material
+| ../Max UI                  |                        | 3Ds Max custom dark UI scheme.
+| ./usericons                | UI Icons for some of the scripts | Change node XYZ dimensions.
+| adv_path_manager           | Advanced Paths Manager | Utility for managing user paths (beta)
+| align_assets               | Align assets           | Rearrange nodes in a row.
+| arch_scaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor.
+| Audit_materials            | Audit Materials        | Filter objects by material
+| cam_manager                | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios.
+| gamma_adjustment           |                        | Convert Normal Maps gamma
+| mat_tools                  | bumpTo100              | (V-ray) material Bump value to 100.0
+| mat_tools                  | FaceSel                | Select faces with same material ID
+| mat_tools                  | FnameToBMap            | Change the names of Bitmap Textures to the name of the loaded files.
+| mat_tools                  | MapLoader              | Load multiple bitmapTextures to the slate material editor
+| mat_tools                  | ObjIDbyCAM             | Set objects ID for current camera view
+| mat_tools                  | QIDSet                 | Set material IDs for selected faces
+| mat_tools                  | Remove_mats            | Remove material from selection
+| mat_tools                  | RndIDSet               | Set random material IDs for selected faces
+| mat_tools                  | SelNoMat               | Filter nodes without material in current selection.
+| panel_cuts                 | Panel cuts             | Tool for creating panel cuts reports. Useful for furniture or cabinets design.
+| photographic_composition_guides |                   | Display photographic composition guides overlay in viewport.
+| random_detach              | Random Detach          | Random detach **editable poly** elements.
+| random_select              | Random Select          | Random nodes selection.
+| resizer                    | Resize modifier        | Change node XYZ dimensions.
+| vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.
+| vraymat_populate           |                        | Populate material editor slots with VRayMtl
+| xref_replace               | Replace with Xref      | Replace selected node with Xref Record.
 
 ## MCG solutions
 
@@ -42,7 +42,7 @@
 1. Locate **3ds Max user folder**. Usually at: *C:\Users\USER_NAME\AppData\Local\Autodesk\3dsMax\20XX - 64bit\ENU*
 2. Copy **.ms** and **.mse** to *scripts*, *.mcr* files to *usermacros* and Icons (.bmp) to *usericons*
 3. Restart Max if opened
-4. Add the macro to a toolbar. Found under the category "HAG tools"
+4. Add the macro to a toolbar. Found under the category "BUMP tools"
 
 ---
 

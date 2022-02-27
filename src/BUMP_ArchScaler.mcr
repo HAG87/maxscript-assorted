@@ -6,8 +6,8 @@ Small utility to rescale nodes using an architectural scale factor.
 ------------------------------------------------------------------------------------------------------------------------------------
 */
 
-macroScript HAG_units
-	category:"HAG tools"
+macroScript BUMP_units
+	category:"BUMP tools"
 	buttontext:"ArchScaler"
 	tooltip:"Small utility to rescale nodes using an architectural scale factor."
 (

@@ -2,8 +2,8 @@
     These MacroScripts are designed to look for the source script in either Scripts / User scripts folders.
 */
 -- Node Merge tool
-MacroScript HAG_nodeMerge
-	category:   "HAG tools"
+MacroScript BUMP_nodeMerge
+	category:   "BUMP tools"
 	ButtonText: "Merge nodes"
 	(
 		local _Tool
@@ -11,9 +11,9 @@ MacroScript HAG_nodeMerge
 		(
 			_Tool = if _Tool == undefined then (
 				try (
-					fileIn("$Scripts\\HAG_Merge_tool.ms")
+					fileIn("$Scripts\\BUMP_Merge_tool.ms")
 				) catch (
-					fileIn("$UserScripts\\HAG_Merge_tool.ms")
+					fileIn("$UserScripts\\BUMP_Merge_tool.ms")
 				)
 			) else _Tool
 
@@ -23,8 +23,8 @@ MacroScript HAG_nodeMerge
 		)
 	)
 -- Node Explode Tool
-MacroScript HAG_nodeExplode
-	category:   "HAG tools"
+MacroScript BUMP_nodeExplode
+	category:   "BUMP tools"
 	ButtonText: "Explode nodes"
 	(
 		local _Tool
@@ -32,9 +32,9 @@ MacroScript HAG_nodeExplode
 		(
 			_Tool = if _Tool == undefined then (
 				try (
-					fileIn("$Scripts\\HAG_Merge_tool.ms")
+					fileIn("$Scripts\\BUMP_Merge_tool.ms")
 				) catch (
-					fileIn("$UserScripts\\HAG_Merge_tool.ms")
+					fileIn("$UserScripts\\BUMP_Merge_tool.ms")
 				)
 			) else _Tool
 

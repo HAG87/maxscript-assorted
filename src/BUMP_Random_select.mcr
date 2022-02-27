@@ -3,8 +3,8 @@
 Random object selection
 ------------------------------------------------------------------------------------------------------------------
 */
-macroScript HAG_RndSel
-	category:     "HAG tools"
+macroScript BUMP_RndSel
+	category:     "BUMP tools"
 	ButtonText:   "Random Select"
 	toolTip:      "Select random nodes"
 	silentErrors: true

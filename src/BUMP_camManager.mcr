@@ -9,8 +9,8 @@
 * Added Shutter parameters, reordered parameters, changed presets to common aspect ratios
 * -------------------------------------------------------------------------------------------
 */
-macroScript HAG_CamMngr
-	category:     "HAG tools"
+macroScript BUMP_CamMngr
+	category:     "BUMP tools"
 	ButtonText:   "Camera manager"
 	tooltip:      "Manage Cameras and render batch views"
 	silentErrors: false

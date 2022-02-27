@@ -3,12 +3,12 @@
 * Align Assets
 * MODIFY AT YOUR OWN RISK
 * atelierbump@gmail.com
-* Category: "HAG tools"
+* Category: "BUMP tools"
 * 11-3-2018 - Fixed repostion of Groups and Parented Nodes
 * -------------------------------------------------------------------------------------------------------
 */
-macroscript HAG_line_assets
-	category:"HAG tools"
+macroscript BUMP_line_assets
+	category:"BUMP tools"
 	buttonText:"ALN"
 	tooltip:"Put assets in line"
 	Icon:#("AutoGrid",2)

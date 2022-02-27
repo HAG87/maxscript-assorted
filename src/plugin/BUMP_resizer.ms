@@ -75,7 +75,7 @@ version:1.0
 	rollout help "About" rolledUp:true
 	(
 		label lbl_1 "Node Resize modifier"
-		hyperLink lnk_1 "Atelier Bump" color:(color 200 150 0) address:"http:/atelierbump.tk" align:#center
+		hyperLink lnk_1 "Atelier Bump" color:(color 200 150 0) address:"https:/atelierbump.com" align:#center
 	)
 	on map i p do
 	(
