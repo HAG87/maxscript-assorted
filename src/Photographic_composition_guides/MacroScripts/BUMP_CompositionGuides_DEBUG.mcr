@@ -16,8 +16,12 @@ macroscript DSTLBX_vpComp
 		-- safe load with support for Exchange store
 		fn loadScriptFile =
 		(
-			local ExchangeStorePath = "$publicExchangeStoreInstallPath/Photographic composition guides.bundle/Contents/scripts/vpCompositionGuides.mse"
-			local LegacyPath = "$Scripts/vpCompositionGuides.mse"
+			-- DEBUG ONLY!
+			local ExchangeStorePath = "$publicExchangeStoreInstallPath/Photographic composition guides.bundle/Contents/scripts/vpCompositionGuides.ms"
+			local LegacyPath = "$Scripts/vpCompositionGuides.ms"
+
+			--	local ExchangeStorePath = "$publicExchangeStoreInstallPath/Photographic composition guides.bundle/Contents/scripts/vpCompositionGuides.mse"
+			--	local LegacyPath = "$Scripts/vpCompositionGuides.mse"
 
 			if doesFileExist ExchangeStorePath
 			then (filein ExchangeStorePath)()
