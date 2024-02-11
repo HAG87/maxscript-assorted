@@ -1,5 +1,5 @@
 /*
-	Utility for changing the gamma value of bitmap texture maps. Intendet to be use on Normal Maps
+	Utility for changing the gamma value of bitmap texture maps. Intended to be use on Normal Maps
 	Note: this is a work-in-progress
 	2020 - https://atelierbump.com
 */
