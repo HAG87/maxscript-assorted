@@ -2,7 +2,7 @@
 * -------------------------------------------------------------------------------------------------------
 * https://atelierbump.com
 * Category: "BUMP tools"
-* last updated: 08-10-2019
+* last updated: 01-05-2023
 * MODIFY AT YOUR OWN RISK
 * -------------------------------------------------------------------------------------------------------
 * BUMP_mapLoader   | Load multiple bitmapTextures to the slate material editor
@@ -14,6 +14,7 @@
 * BUMP_RndIDSet    | Set random material IDs for selected faces
 * BUMP_qIDSet      | Set material IDs for selected faces
 * BUMP_listMtl     | List materials in selection
+* BUMP_selByMat    | Select objects with the same material as the current selection
 */
 /* Change mtl bump value */
 macroScript DSTLBX_bumpToOneHundred
@@ -372,8 +373,27 @@ macroScript BUMP_qIDSet
 		)
 	)
 )
+/* Select by material */
+macroScript BUMP_selByMat
+	category:     "BUMP tools"
+	ButtonText:   "Select by Material"
+	tooltip:      "Select objects with the same material as the current selection."
+	silentErrors: true
+(
+	on execute do
+	(
+		-- current selection material
+		local mats = for i in (getCurrentSelection()) where i.material != undefined collect i.material
+		-- unique array of materials
+		makeuniquearray mats
+		-- look for objects with the same material
+		local sim = for i in objects where findItem mats i.material collect i
+		-- select the resul
+		if sim.count > 0 then select sim
+	)
+)
 /* List materials in selection */
-	macroScript BUMP_listMtl
+macroScript BUMP_listMtl
 	category:     "BUMP tools"
 	ButtonText:   "List Materials"
 	tooltip:      "List materials of selected nodes"

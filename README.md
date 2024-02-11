@@ -4,36 +4,36 @@
 
 | File | Name | Description |
 | ---- | ---- | ----------- |
-| ../Max UI                  |                        | 3Ds Max custom dark UI scheme.
-| ./usericons                | UI Icons for some of the scripts | Change node XYZ dimensions.
-| adv_path_manager           | Advanced Paths Manager | Utility for managing user paths (beta)
-| align_assets               | Align assets           | Rearrange nodes in a row.
-| arch_scaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor.
-| Audit_materials            | Audit Materials        | Filter objects by material
-| cam_manager                | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios.
-| gamma_adjustment           |                        | Convert Normal Maps gamma
-| mat_tools                  | bumpTo100              | (V-ray) material Bump value to 100.0
-| mat_tools                  | FaceSel                | Select faces with same material ID
-| mat_tools                  | FnameToBMap            | Change the names of Bitmap Textures to the name of the loaded files.
-| mat_tools                  | MapLoader              | Load multiple bitmapTextures to the slate material editor
-| mat_tools                  | ObjIDbyCAM             | Set objects ID for current camera view
-| mat_tools                  | QIDSet                 | Set material IDs for selected faces
-| mat_tools                  | Remove_mats            | Remove material from selection
-| mat_tools                  | RndIDSet               | Set random material IDs for selected faces
-| mat_tools                  | SelNoMat               | Filter nodes without material in current selection.
-| panel_cuts                 | Panel cuts             | Tool for creating panel cuts reports. Useful for furniture or cabinets design.
-| photographic_composition_guides |                   | Display photographic composition guides overlay in viewport.
-| random_detach              | Random Detach          | Random detach **editable poly** elements.
-| random_select              | Random Select          | Random nodes selection.
-| resizer                    | Resize modifier        | Change node XYZ dimensions.
-| vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.
-| vraymat_populate           |                        | Populate material editor slots with VRayMtl
-| xref_replace               | Replace with Xref      | Replace selected node with Xref Record.
+| ../Max UI                  |                                  | 3Ds Max custom dark UI scheme. |
+| ./usericons                | UI Icons for some of the scripts | Change node XYZ dimensions.    |
+| adv_path_manager           | Advanced Paths Manager | Utility for managing user paths (beta)                              |
+| align_assets               | Align assets           | Rearrange nodes in a row.                                           |
+| arch_scaler                | Architecture Scale     | Small utility to rescale nodes using an architectural scale factor. |
+| Audit_materials            | Audit Materials        | Filter objects by material                                          |
+| cam_manager                | Camera tools           | Compact interface to manage, review, select cameras. It also can add batch render views, change resolution and aspect ratio per camera. Comes with presets for common aspect ratios. |
+| gamma_adjustment           |                        | Convert Normal Maps gamma                                                      |
+| mat_tools                  | bumpTo100              | (V-ray) material Bump value to 100.0                                           |
+| mat_tools                  | FaceSel                | Select faces with same material ID                                             |
+| mat_tools                  | FnameToBMap            | Change the names of Bitmap Textures to the name of the loaded files.           |
+| mat_tools                  | MapLoader              | Load multiple bitmapTextures to the slate material editor                      |
+| mat_tools                  | ObjIDbyCAM             | Set objects ID for current camera view                                         |
+| mat_tools                  | QIDSet                 | Set material IDs for selected faces                                            |
+| mat_tools                  | Remove_mats            | Remove material from selection                                                 |
+| mat_tools                  | RndIDSet               | Set random material IDs for selected faces                                     |
+| mat_tools                  | SelNoMat               | Filter nodes without material in current selection.                            |
+| panel_cuts                 | Panel cuts             | Tool for creating panel cuts reports. Useful for furniture or cabinets design. |
+| photographic_composition_guides |                   | Display photographic composition guides overlay in viewport.                   |
+| random_detach              | Random Detach          | Random detach **editable poly** elements.                                      |
+| random_select              | Random Select          | Random nodes selection.                                                        |
+| resizer                    | Resize modifier        | Change node XYZ dimensions.                                                    |
+| vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.                                       |
+| vraymat_populate           |                        | Populate material editor slots with VRayMtl                                    |
+| xref_replace               | Replace with Xref      | Replace selected node with Xref Record.                                        |
 
 ## MCG solutions
 
 * **HyperClone**: Advanced cloning tool.
-* **ShereClone**: Instance objects on a spherical space or in a convex closed mesh.
+* **SphereClone**: Instance objects on a spherical space or in a convex closed mesh.
 
 ---
 

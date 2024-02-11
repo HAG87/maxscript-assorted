@@ -4,3 +4,4 @@ Thumbs.db
 #Ignore files build by vscode and binaries
 *.exe
 .vscode
+**/min
