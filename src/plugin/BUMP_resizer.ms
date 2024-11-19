@@ -2,10 +2,12 @@ plugin simpleMod resizer
 name:"Resize"
 classID:#(683325,456281)
 version:1.0
-(
+(	
+	local is_cloned = false
 	fn getNode = (refs.dependentnodes this)[1]
 	fn getLimits obj =
 	(
+		obj.max -- #BUGFIX on attachedToNode get size
 		local _min = getModContextBBoxMin obj this
 		local _max = getModContextBBoxMax obj this
 		dim = _max - _min
@@ -23,17 +25,20 @@ version:1.0
 		lk_y type:#boolean ui:clk_y default:true
 		lk_z type:#boolean ui:clk_z default:true
 		
-		on x_amount set val do (if not loading then newDims.x = val)
-		on y_amount set val do (if not loading then newDims.y = val)
-		on z_amount set val do (if not loading then newDims.z = val)
+		on x_amount set val do newDims.x = val
+		on y_amount set val do newDims.y = val
+		on z_amount set val do newDims.z = val
 	)
 	on attachedToNode nd do (
-		if nd != undefined then (
--- 			proportion = getLimits nd
--- 			newDims = proportion
+		if nd != undefined and not is_cloned then (
+			local l = getLimits nd
+			x_amount = l.x
+			y_amount = l.y
+			z_amount = l.z
 		)
 	)
-	on clone nd do (
+	on clone orig do (
+		is_cloned = true
 	)
 	rollout params "Resize Parameters"
 	(
