@@ -5,6 +5,7 @@ version:1.0
 (	
 	local is_cloned = false
 	fn getNode = (refs.dependentnodes this)[1]
+	
 	fn getLimits obj =
 	(
 		obj.max -- #BUGFIX on attachedToNode get size
@@ -13,14 +14,15 @@ version:1.0
 		dim = _max - _min
 		dim
 	)
+	
 	parameters main rollout:params
 	(
-		x_amount type:#worldunits ui:SpinX default:100
-		y_amount type:#worldunits ui:SpinY default:100
-		z_amount type:#worldunits ui:SpinZ default:100
+		x_amount type:#worldunits ui:SpinX
+		y_amount type:#worldunits ui:SpinY
+		z_amount type:#worldunits ui:SpinZ
 		proportion type:#point3 default:[1.0,1.0,1.0]
-		newDims type:#point3 default:[100.0,100.0,100.0]
-		isProportioned type:#boolean ui:Chk1 default:false
+		newDims type:#point3
+		isProportioned type:#boolean ui:Chk1 default:true
 		lk_x type:#boolean ui:clk_x default:true
 		lk_y type:#boolean ui:clk_y default:true
 		lk_z type:#boolean ui:clk_z default:true
@@ -29,6 +31,7 @@ version:1.0
 		on y_amount set val do newDims.y = val
 		on z_amount set val do newDims.z = val
 	)
+	
 	on attachedToNode nd do (
 		if nd != undefined and not is_cloned then (
 			local l = getLimits nd
@@ -37,14 +40,16 @@ version:1.0
 			z_amount = l.z
 		)
 	)
+	
 	on clone orig do (
 		is_cloned = true
 	)
+	
 	rollout params "Resize Parameters"
 	(
-		spinner SpinX "X : " type:#worldunits range:[-10000000.0,10000000.0,100.0]
-		spinner SpinY "Y : " type:#worldunits range:[-10000000.0,10000000.0,100.0]
-		spinner SpinZ "Z : " type:#worldunits range:[-10000000.0,10000000.0,100.0]
+		spinner SpinX "X : " type:#worldunits range:[0, 10000000, 100] scale:1
+		spinner SpinY "Y : " type:#worldunits range:[0, 10000000, 100] scale:1
+		spinner SpinZ "Z : " type:#worldunits range:[0, 10000000, 100] scale:1
 		Checkbox Chk1 "Keep proportions"
 		group "Link proportions"
 		(
@@ -77,11 +82,13 @@ version:1.0
 			) 
 		)		
 	)
+	
 	rollout help "About" rolledUp:true
 	(
 		label lbl_1 "Node Resize modifier"
 		hyperLink lnk_1 "Atelier Bump" color:(color 200 150 0) address:"https://atelierbump.com" align:#center
 	)
+	
 	on map i p do
 	(
 		if extent.x != 0.0d0 then p.x = p.x / extent.x * newDims.x
