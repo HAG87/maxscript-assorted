@@ -76,35 +76,39 @@
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		local only_invalid = false
 		--
-		local TEMP_PATHS   = #()
-		local ADD_PATHS    = #()
-		local REMOVE_PATHS = #()
+		local
+			TEMP_PATHS   = #(),
+			ADD_PATHS    = #(),
+			REMOVE_PATHS = #()
 		--
 		local temp_listItemsCol
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- file extensions, add as needed
-		local img_ext = #(".jpg",".jpeg",".png",".tif",".tiff",".tga",".bmp",".exr",".gif", ".hdr", ".hdri")
-		local md_ext = #(".3ds",".max",".obj",".fbx",".iges",".dwg",".dxf",".rvt",".skp")
+		local
+			img_ext = #(".jpg",".jpeg",".png",".tif",".tiff",".tga",".bmp",".exr",".gif", ".hdr", ".hdri"),
+			md_ext = #(".3ds",".max",".obj",".fbx",".iges",".dwg",".dxf",".rvt",".skp")
 		----------------------------------------------------------------------------------------------------------------------------------------------------
-		local alignLeft              = (dotNetClass "HorizontalAlignment").Left
-		local resizeToContent        = (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent
-		local resizeToHeader         = (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize
-		local dotNetLstViewItemClass = dotNetClass "System.Windows.Forms.ListViewItem"
-		local dotNetLstViewClass     = dotNetClass "System.Windows.Forms.ListView"
-		local dotNetColor            = dotNetClass "System.Drawing.Color"
-		local dotNetFont             = dotNetClass "System.Drawing.Font"
-		local font_underline         = (dotNetClass "System.Drawing.FontStyle").Underline
-		local font_bold              = (dotNetClass "System.Drawing.FontStyle").Bold
-		local font_strk              = (dotNetClass "System.Drawing.FontStyle").Strikeout
-		local font_reg               = (dotNetClass "System.Drawing.FontStyle").Regular
-		local folder_dialog          = dotnetobject "FolderBrowserDialog"
-		local dotNetDirectory        = dotnetclass "System.IO.Directory"
-		local DirectorySearch        = (dotNetClass"System.IO.SearchOption").AllDirectories
-		local dotNetSort             = dotNetClass "System.Windows.Forms.SortOrder"
+		local
+			alignLeft              = (dotNetClass "HorizontalAlignment").Left,
+			resizeToContent        = (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent,
+			resizeToHeader         = (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize,
+			dotNetLstViewItemClass = dotNetClass "System.Windows.Forms.ListViewItem",
+			dotNetLstViewClass     = dotNetClass "System.Windows.Forms.ListView",
+			dotNetColor            = dotNetClass "System.Drawing.Color",
+			dotNetFont             = dotNetClass "System.Drawing.Font",
+			font_underline         = (dotNetClass "System.Drawing.FontStyle").Underline,
+			font_bold              = (dotNetClass "System.Drawing.FontStyle").Bold,
+			font_strk              = (dotNetClass "System.Drawing.FontStyle").Strikeout,
+			font_reg               = (dotNetClass "System.Drawing.FontStyle").Regular,
+			folder_dialog          = dotnetobject "FolderBrowserDialog",
+			dotNetDirectory        = dotnetclass "System.IO.Directory",
+			DirectorySearch        = (dotNetClass"System.IO.SearchOption").AllDirectories,
+			dotNetSort             = dotNetClass "System.Windows.Forms.SortOrder"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
-		local validPathColor = dotNetColor.seagreen
-		local invalidPathColor = dotNetColor.Crimson
-		local removedPathColor = dotNetColor.Goldenrod
+		local
+			validPathColor   = dotNetColor.seagreen,
+			invalidPathColor = dotNetColor.Crimson,
+			removedPathColor = dotNetColor.Goldenrod
 		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
 		----------------------------------------------------------------------------------------------------------------------------------------------------
 		-- Compare function used by bsearch:

@@ -25,7 +25,7 @@
 | photographic_composition_guides |                   | Display photographic composition guides overlay in viewport.                   |
 | random_detach              | Random Detach          | Random detach **editable poly** elements.                                      |
 | random_select              | Random Select          | Random nodes selection.                                                        |
-| resizer                    | Resize modifier        | Change node XYZ dimensions.                                                    |
+| plugin/BUMP_resizer             | Resize modifier        | Change node XYZ dimensions.                                                    |
 | vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.                                       |
 | vraymat_populate           |                        | Populate material editor slots with VRayMtl                                    |
 | xref_replace               | Replace with Xref      | Replace selected node with Xref Record.                                        |
