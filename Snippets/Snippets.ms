@@ -14,7 +14,7 @@ fn getViewDirectionRay =
 )
 
 --------------------------------------------------------------------------------
-/* SELECT ALL NODES INSIDE A OPEN CONTAINER*/
+/* SELECT ALL NODES INSIDE AN OPEN CONTAINER*/
 fn cont_content c =
 (
 	if isKindOf c Container then (
@@ -75,7 +75,7 @@ fn resetAxisRot obj axis:x = (
 )
 
 --------------------------------------------------------------------------------
-/* set Onj ID relative to camera distance */
+/* set Obj ID relative to camera distance */
 fn setObjID =
 (
 	local cam = getActiveCamera()
@@ -104,17 +104,13 @@ fn setObjID =
 )
 
 --------------------------------------------------------------------------------
-/* SELECT ALL NODES WHITOUT MATERIAL*/
+/* SELECT ALL NODES WITHOUT MATERIAL*/
 fn sel_nomat =
 (
 	local sel = getCurrentSelection()
 	local nomat = for i in sel where (i.material == undefined and not (isgrouphead i)) collect i
 	select nomat
 )
-
---------------------------------------------------------------------------------
-/* FIX VRAY NEXT GLOSSINESS UNLOCK */
-fn vrayFixGlossLock = for m in (getclassinstances vraymtl) do m.reflection_lockGlossiness = true
 
 --------------------------------------------------------------------------------
 /* QUICK ALIGN TO CURRENT COORDINATE SYSTEM */
@@ -131,12 +127,5 @@ mapped fn alignToCPTM obj =
 		--obj.transform = obj.transform * (inverse spaceTM) * (scalematrix sc) * spaceTM
 	)
 )
+
 --------------------------------------------------------------------------------
-/* bump map multiplier at 100.0 for normal maps */
--- TODO: Implement for more popular renders and default materials
-(
-	-- for Vray materials only!
-	local mats = getClassInstances VRayMtl
-	mats = makeUniqueArray mats
-	for m in mats where classOf (m.texmap_bump) == VRayNormalMap do m.texmap_bump_multiplier = 100.0m	
-)
