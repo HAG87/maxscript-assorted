@@ -25,7 +25,8 @@
 | photographic_composition_guides |                   | Display photographic composition guides overlay in viewport.                   |
 | random_detach              | Random Detach          | Random detach **editable poly** elements.                                      |
 | random_select              | Random Select          | Random nodes selection.                                                        |
-| plugin/BUMP_resizer             | Resize modifier        | Change node XYZ dimensions.                                                    |
+| plugin/BUMP_resizer        | Resize modifier        | Change node XYZ dimensions.                                                    |
+| SnapSets                   | Snap state sets        | Save and restore snap settings states.                                         |
 | vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.                                       |
 | vraymat_populate           |                        | Populate material editor slots with VRayMtl                                    |
 | xref_replace               | Replace with Xref      | Replace selected node with Xref Record.                                        |
@@ -129,5 +130,19 @@ Random node selection. By percent of the selected nodes or "Dot-Gap" pattern.
 
 >Example:
 >Keep: 3; Quit: 2
+
+---
+
+## SnapSets
+
+Save and restore snap settings states.
+
+
+The tool is a minimal floater dialog with a list of saved snap states.
+The UI is a collapsable panel; Press the Check mark button to reveal the states management options.
+
+### How to add a new state
+
+Activate the desired snaps and save the current state in the SnapSets dialog.
 
 ---
