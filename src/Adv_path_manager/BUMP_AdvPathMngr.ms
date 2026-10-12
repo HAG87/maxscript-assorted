@@ -49,31 +49,28 @@
 		)
 	)
 
-	rollout roll_mPath "Advanced External Files (User Paths) Manager" width:1000 --height:400
+	rollout roll_mPath "Advanced External Files (User Paths) Manager" width:1000 autoLayoutOnResize:true --height:400
 	(
 		dotNetControl lst_mPath "ListView" height:300
-		button btn_1 "Change / Resolve" width:150 align:#left across:5
-		button btn_3 "Brownse..." width:150  align:#left
-		button btn_8 "Paste..."  width:150  align:#left
-		button btn_2 "Remove" width:150  align:#left
+		button btn_3 "Add ..." width:80  align:#left across:4
+		button btn_8 "Paste ..."  width:80  align:#left offset:[-150,0]
+		button btn_2 "Remove" width:80  align:#left offset:[-300,0]
 		checkbutton btn_4 "Show Only Invalids" align:#right
-
-		checkBox chk_sb "Sub-Directories search filter" align:#left checked:true across:2
-		editText txt_filter "Pattern: " Text:"#(\"map*\",\"texture*\")" align:#right
-
-		imgTag sep1 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
-		button btn_7 "Remove ..." width:150 align:#left across:7
+		checkBox chk_sb "Sub-Directories search filter: " align:#left checked:true across:2
+		editText txt_filter "" Text:"#(\"map*\",\"texture*\")" width:790 align:#left offset:[-305,0]
+		imgTag sep1 width:(roll_mPath.width) height:1 align:#center offset:[0,5]
+		button btn_7 "Clean ..." width:150 align:#left across:7
 		checkbox chk_1 "Empty folders" checked:true width:80 align:#right
 		checkbox chk_dupes "Duplicates" checked:true width:80 align:#right
 		checkbox chk_2 "Not Images" width:80 align:#right
 		checkbox chk_3 "Not Models" width:80 align:#right
 		checkbox chk_4 "Other (specify):" align:#right
 		editText txt_1 text:"#(\".ies\",\".svg\")" align:#left
-		imgTag sep2 width:(roll_mPath.width) height:1 bitmap:(bitmap 1 2 color: (color 5 5 5)) align:#center offset:[0,10]
+		imgTag sep2 width:(roll_mPath.width) height:1 align:#center offset:[0,5]
 		button btn_open "Explore selected" height:30 align:#left across:3
 		button btn_5 "Done" width:150 height:30 align:#right	offset:[160,0]
 		button btn_6 "Cancel" width:150 height:30 align:#right
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------
 		local only_invalid = false
 		--
 		local
@@ -82,12 +79,12 @@
 			REMOVE_PATHS = #()
 		--
 		local temp_listItemsCol
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------
 		-- file extensions, add as needed
 		local
 			img_ext = #(".jpg",".jpeg",".png",".tif",".tiff",".tga",".bmp",".exr",".gif", ".hdr", ".hdri"),
 			md_ext = #(".3ds",".max",".obj",".fbx",".iges",".dwg",".dxf",".rvt",".skp")
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------
 		local
 			alignLeft              = (dotNetClass "HorizontalAlignment").Left,
 			resizeToContent        = (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent,
@@ -104,13 +101,13 @@
 			dotNetDirectory        = dotnetclass "System.IO.Directory",
 			DirectorySearch        = (dotNetClass"System.IO.SearchOption").AllDirectories,
 			dotNetSort             = dotNetClass "System.Windows.Forms.SortOrder"
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------
 		local
 			validPathColor   = dotNetColor.seagreen,
 			invalidPathColor = dotNetColor.Crimson,
 			removedPathColor = dotNetColor.Goldenrod
 		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------
 		-- Compare function used by bsearch:
 		fn extComparator a b =
 		(
@@ -163,7 +160,24 @@
 				folders
 			--	*/
 		)
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		-- image separators
+		fn dividerImage setColor: =
+		(
+			local col_1 = if isKindOf setColor color then setColor else ((colorMan.getColor #shadow) * 255.0) as color
+			local
+			gammavalue = 1.0,
+			colorSpaceVal = unsupplied
+
+			if ColorPipelineMgr != undefined then (
+				gammavalue = 1.0 / ColorPipelineMgr.DisplayGamma
+				if ColorPipelineMgr.Mode != #unmanaged then colorSpaceVal = "sRGB"
+			) else if IDisplayGamma != undefined then (
+				gammavalue = 1.0 / IDisplayGamma.gamma
+			)
+			-- return 1x1 bitmap
+			bitmap 1 1 color:col_1 gamma:gammavalue colorSpace:colorSpaceVal
+		)
+		-----------------------------------------------------------------------
 		-- Re-apply style
 		fn lst_restyle =
 		(
@@ -193,10 +207,8 @@
 		(
 			local res_list = #()
 			if mP_list != undefined then (
-				local ForeColor
-				local currpath
-				local subitems
-				local res_list =
+				local ForeColor, currpath, subitems
+				res_list =
 				for i=1 to mP_list.count collect (
 					currpath = mP_list[i]
 					subitems = #()
@@ -221,8 +233,10 @@
 		(
 			local the_subitems = the_item.subitems
 			the_item.text = pathConfig.stripPathToLeaf new_path
+
 			the_subitems.item[1].text = new_path
 			the_subitems.item[2].text = (getFiles (pathConfig.appendPath new_path "*.*")).count as string
+			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else if (pathConfig.isUncPath new_path) then "UNC" else "-"
 			the_subitems.item[3].text =
 			if (dotNetDirectory.exists new_path) then (
 				the_item.ForeColor = validpathColor
@@ -231,7 +245,7 @@
 				the_item.ForeColor = invalidPathColor
 				"MISSING"
 			)
-			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else if (pathConfig.isUncPath new_path) then "UNC" else "-"
+			
 		)
 		-- Initialize Collection
 		fn Init =
@@ -245,9 +259,6 @@
 		-- Commit changes to Paths
 		fn commit =
 		(
-			-- format "%\n" REMOVE_PATHS
-			-- format "%\n" ADD_PATHS
-			
 			if not (queryBox "Commit changes ?. This could take a while to process.") then return false
 			
 			-- remove any dupes
@@ -309,12 +320,41 @@
 			lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
 			silentValue
 		)
-		----------------------------------------------------------------------------------------------------------------------------------------------------
+		fn resize x y =
+		(
+			lst_mPath.width = x 
+			lst_mPath.height = y - 150
+			
+			btn_3.pos = [btn_3.pos.x, y - 140]
+			btn_8.pos = [btn_8.pos.x, y - 140]
+			btn_2.pos = [btn_2.pos.x, y - 140]
+			btn_4.pos = [btn_4.pos.x, y - 140]
+			
+			chk_sb.pos = [chk_sb.pos.x, y - 115]
+			txt_filter.pos = [txt_filter.pos.x, y - 115]
+			
+			sep1.pos = [sep1.pos.x, y - 83]
+			btn_7.pos = [btn_7.pos.x, y - 77]
+			chk_1.pos = [chk_1.pos.x, y - 77]
+			chk_dupes.pos = [chk_dupes.pos.x, y - 77]
+			chk_2.pos = [chk_2.pos.x, y - 77]
+			chk_3.pos = [chk_3.pos.x, y - 77]
+			chk_4.pos = [chk_4.pos.x, y - 77]
+			txt_1.pos = [txt_1.pos.x, y - 77]
+			
+			sep2.pos = [sep2.pos.x, y - 41]
+			btn_open.pos = [btn_open.pos.x, y - 35]
+			btn_5.pos = [btn_5.pos.x, y - 35]
+			btn_6.pos = [btn_6.pos.x, y - 35]
+		)
+		-----------------------------------------------------------------------
 		-- Initialize
 		on roll_mPath open do
 		(
+			sep1.bitmap = dividerImage()
+			sep2.bitmap = dividerImage()
+			-----------------------------------------------------------------------
 			local HZ = (dotNetClass "HorizontalAlignment").Left
-			--------------------------------------------------------------------------------------------------------------------------------
 			--Setup the forms view
 			lst_mPath.view = (dotNetClass "system.windows.forms.view").details
 			--Set so full width of listView is selected and not just first column.
@@ -339,7 +379,7 @@
 			lst_mPath.allowDrop = true
 			-- Items Sort
 			lst_mPath.Sorting = dotNetSort.Ascending
-			--------------------------------------------------------------------------------------------------------------------------------
+			-----------------------------------------------------------------------
 			-- Add Columns
 			lstV_addColumns lst_mPath #("Folder name", "Full path", "Files", "Status", "Type") autosize:True
 			-- Add Items
@@ -348,44 +388,65 @@
 		)
 		-- close
 		on roll_mPath close do ( lst_mPath.Dispose(); gc())
-		---------------------------------------------------------------------------------------------------------------------------------------------------- Event handlers
-		-- Change entry
-		on btn_1 pressed do
+		on roll_mPath resized size do
 		(
-			local underline = dotNetObject dotNetFont (lst_mPath.Font) font_underline
-			-- get items list
-			local itms = lst_mPath.SelectedItems.Item
-			local itms_count = lst_mPath.SelectedItems.count
-			for i=0 to itms_count-1 do (
-				local the_item = itms[i]
-				folder_dialog.showDialog()
-				local new_path = folder_dialog.SelectedPath
-				if new_path != "" then (
-					-- add old to remove list
-					appendIfUnique REMOVE_PATHS (the_item.Subitems.Item[1].text)
-					-- add new to add list
-					appendIfUnique ADD_PATHS new_path
-					-- update listview
-					the_item.Font = underline
-					update_item the_item new_path
+			resize (size.x as integer) (size.y as integer)			
+		)
+		----------------------------------------------------------------------- Event handlers
+		-- Change entry
+		on lst_mPath MouseDoubleClick sender args do
+		(
+			local hitTest = (lst_mPath.HitTest args.X args.Y).Item
+
+			if hitTest != undefined do
+			(
+				local underline = dotNetObject dotNetFont (lst_mPath.Font) font_underline
+				-- get items list
+				local itms = lst_mPath.SelectedItems.Item
+				local itms_count = lst_mPath.SelectedItems.count
+				for i=0 to itms_count-1 do (
+					local the_item = itms[i]
+					folder_dialog.showDialog()
+					local new_path = folder_dialog.SelectedPath
+					if new_path != "" then (
+						-- add old to remove list
+						appendIfUnique REMOVE_PATHS (the_item.Subitems.Item[1].text)
+						-- add new to add list
+						appendIfUnique ADD_PATHS new_path
+						-- update listview
+						the_item.Font = underline
+						update_item the_item new_path
+					)
 				)
 			)
 		)
 		-- Remove entry
 		on btn_2 pressed do
 		(
-			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
-			local regular = dotNetObject dotNetFont (lst_mPath.Font) font_reg
-			local itms = lst_mPath.SelectedItems.Item
-			local itms_count = lst_mPath.SelectedItems.count
+			local
+			strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk,
+			regular = dotNetObject dotNetFont (lst_mPath.Font) font_reg,
+			itms = lst_mPath.SelectedItems.Item,
+			itms_count = lst_mPath.SelectedItems.count
 			
-			for i=0 to itms_count-1 do (
-				local the_item = itms[i]
-				local item_path = the_item.Subitems.Item[1].Text
-				local f_d = findItem REMOVE_PATHS item_path
+			for i=0 to itms_count-1 do
+			(
+				local
+					the_item = itms[i],
+					item_path = the_item.Subitems.Item[1].Text,
+					f_d = findItem REMOVE_PATHS item_path
+				
+				if f_d == 0 then
+				(
+					the_item.Font = strikeout
+					the_item.ForeColor = removedPathColor
+					appendIfUnique REMOVE_PATHS item_path
+				)
+				/*
+				local
+					save_color = the_item.ForeColor,
+					save_Font = the_item.Font
 
-				local save_color = the_item.ForeColor
-				local save_Font = the_item.Font
 				if f_d == 0 then (
 					the_item.Font = strikeout
 					the_item.ForeColor = removedPathColor
@@ -396,6 +457,7 @@
 					the_item.ForeColor = save_color
 					deleteItem REMOVE_PATHS f_d
 				)
+				*/
 			)
 			-- format "%\n" REMOVE_PATHS
 		)
@@ -405,7 +467,7 @@
 			createDialog roll modal:true
 			local response = roll.stored_values
 			-- print response
-			if isKindOf response Array then (
+			if isKindOf response Array do (
 				-- commit the paths
 				path_adder response
 			)
@@ -413,10 +475,10 @@
 		-- add entry
 		on btn_3 pressed do
 		(
-			local res = folder_dialog.showDialog()
+			folder_dialog.showDialog()
 			local the_path = folder_dialog.SelectedPath
 
-			if the_path != "" then path_adder #(the_path)
+			if the_path != "" do path_adder #(the_path)
 		)
 		-- invalid paths filter
 		on btn_4 changed state do
@@ -441,6 +503,7 @@
 			-- local proc_array = TEMP_PATHS + ADD_PATHS REPLACE TEMP PATHS
 			local origin_paths = deepcopy TEMP_PATHS
 			join origin_paths ADD_PATHS
+			
 			-- search for files in folders
 			local filenames =
 			for f=1 to origin_paths.count collect (
@@ -539,5 +602,5 @@
 		on btn_6 pressed do (DestroyDialog roll_mPath)
 		on btn_open pressed do (openDir())
 	)
-	CreateDialog roll_mPath
+	CreateDialog roll_mPath lockWidth:true style:#(#style_titlebar, #style_border, #style_sysmenu, #style_resizing)
 )
