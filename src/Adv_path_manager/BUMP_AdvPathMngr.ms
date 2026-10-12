@@ -11,32 +11,31 @@
 		(
 			local stream = str as StringStream
 			seek stream 0
-			--readValue stream ignoreStringEscapes:true
 			local pathsCol = #()
+			local invalidCount = 0
 			try (
 				while not eof stream do (
 					local the_path = readDelimitedString stream ";\n"
-					-- print the_path
-					-- sanitize the strings
-					-- deal with \"\" and "\n"s
-					--if matchPattern the_path pattern:"\""
-					if pathConfig.isLegalPath the_path then (
-						append pathsCol the_path
-					) else (
-						the_path = substituteString the_path "\"" ""
-						the_path = substituteString the_path "'" ""
-						-- just in case
-						the_path = substituteString the_path "\n" ""
-						-- attemp to validate the path
-						local resolved_path = pathConfig.resolvePathSymbols the_path
-						if pathConfig.isLegalPath resolved_path then (
-							append pathsCol the_path
+					the_path = substituteString the_path "\r" ""
+					the_path = substituteString the_path "\"" ""
+					the_path = substituteString the_path "'" ""
+					the_path = trimLeft (trimRight the_path)
+					if the_path != "" then (
+						local is_legal = pathConfig.isLegalPath the_path
+						if not is_legal do (
+							local resolved_path = pathConfig.resolvePathSymbols the_path
+							is_legal = pathConfig.isLegalPath resolved_path
 						)
+						if is_legal then (
+							appendIfUnique pathsCol the_path
+						) else invalidCount += 1
 					)
 				)
-				-- ensure unique paths
-				pathsCol = makeUniqueArray pathsCol
-			) catch (messageBox "Invalid entries!")
+				if invalidCount > 0 do messageBox ("Skipped " + (invalidCount as string) + " invalid fPath(s).")
+			) catch (
+				messageBox ("Unable to parse the paths. " + (getCurrentException() as string))
+				pathsCol = #()
+			)
 			-- return the paths
 			pathsCol
 		)
@@ -52,9 +51,10 @@
 	rollout roll_mPath "Advanced External Files (User Paths) Manager" width:1000 autoLayoutOnResize:true --height:400
 	(
 		dotNetControl lst_mPath "ListView" height:300
-		button btn_3 "Add ..." width:80  align:#left across:4
-		button btn_8 "Paste ..."  width:80  align:#left offset:[-150,0]
-		button btn_2 "Remove" width:80  align:#left offset:[-300,0]
+		button btn_3 "Add ..." width:80  align:#left across:5
+		button btn_8 "Paste ..."  width:80  align:#left offset:[-100,0]
+		button btn_2 "Remove" width:80  align:#left offset:[-200,0]
+		button btn_open "Explore selected" width:90 align:#left offset:[-300,0]
 		checkbutton btn_4 "Show Only Invalids" align:#right
 		checkBox chk_sb "Sub-Directories search filter: " align:#left checked:true across:2
 		editText txt_filter "" Text:"#(\"map*\",\"texture*\")" width:790 align:#left offset:[-305,0]
@@ -67,9 +67,9 @@
 		checkbox chk_4 "Other (specify):" align:#right
 		editText txt_1 text:"#(\".ies\",\".svg\")" align:#left
 		imgTag sep2 width:(roll_mPath.width) height:1 align:#center offset:[0,5]
-		button btn_open "Explore selected" height:30 align:#left across:3
-		button btn_5 "Done" width:150 height:30 align:#right	offset:[160,0]
-		button btn_6 "Cancel" width:150 height:30 align:#right
+
+		button btn_5 "Done" width:150 height:30 align:#right	across:2	offset:[370,0]
+		button btn_6 "Cancel" width:100 height:30 align:#right
 		-----------------------------------------------------------------------
 		local only_invalid = false
 		--
@@ -79,6 +79,7 @@
 			REMOVE_PATHS = #()
 		--
 		local temp_listItemsCol
+		local file_count_cache = dotNetObject "System.Collections.Hashtable"
 		-----------------------------------------------------------------------
 		-- file extensions, add as needed
 		local
@@ -88,11 +89,11 @@
 		local
 			alignLeft              = (dotNetClass "HorizontalAlignment").Left,
 			resizeToContent        = (dotNetClass "ColumnHeaderAutoResizeStyle").ColumnContent,
-			resizeToHeader         = (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize,
 			dotNetLstViewItemClass = dotNetClass "System.Windows.Forms.ListViewItem",
 			dotNetLstViewClass     = dotNetClass "System.Windows.Forms.ListView",
 			dotNetColor            = dotNetClass "System.Drawing.Color",
 			dotNetFont             = dotNetClass "System.Drawing.Font",
+			resizeToHeader         = (dotNetClass "ColumnHeaderAutoResizeStyle").HeaderSize,
 			font_underline         = (dotNetClass "System.Drawing.FontStyle").Underline,
 			font_bold              = (dotNetClass "System.Drawing.FontStyle").Bold,
 			font_strk              = (dotNetClass "System.Drawing.FontStyle").Strikeout,
@@ -108,13 +109,6 @@
 			removedPathColor = dotNetColor.Goldenrod
 		--	local dotNetContextMenuClass = dotNetClass "System.Windows.Forms.ContextMenu"
 		-----------------------------------------------------------------------
-		-- Compare function used by bsearch:
-		fn extComparator a b =
-		(
-			if a > (toLower b) then 1
-			else if a < (toLower b) then -1
-			else 0
-		)
 		fn invSort a b =
 		(
 			case of (
@@ -123,42 +117,96 @@
 				default:0
 			)
 		)
-		fn ArrayComparator a b =
+		fn pathKey fPath =
 		(
-			if a > b then 1
-				else if a < b then -1
-				else 0
+			local key = toLower (substituteString fPath "/" "\\")
+			while (key.count > 1) AND ((substring key key.count 1) == "\\") AND not (key.count == 3 AND (substring key 2 2) == ":\\") do (
+				key = substring key 1 (key.count - 1)
+			)
+			key
+		)
+		fn makePathLookup paths =
+		(
+			local lookup = dotNetObject "System.Collections.Hashtable"
+			for fPath in paths do (
+				local key = pathKey fPath
+				if not (lookup.ContainsKey key) do lookup.Add key true
+			)
+			lookup
+		)
+		fn pathIsKnown lookup fPath =
+		(
+			lookup.ContainsKey (pathKey fPath)
+		)
+		fn rememberPath lookup fPath =
+		(
+			local key = pathKey fPath
+			if not (lookup.ContainsKey key) do lookup.Add key true
+		)
+		fn findPathIndex paths fPath =
+		(
+			local index = 0
+			local key = pathKey fPath
+			for i=1 to paths.count while index == 0 do (
+				if pathKey paths[i] == key do index = i
+			)
+			index
+		)
+		fn pathFileCount fPath =
+		(
+			local key = pathKey fPath
+			if file_count_cache.ContainsKey key then return file_count_cache.Item[key]
+			if not (dotNetDirectory.exists fPath) then return "0"
+			local count = (getFiles (pathConfig.appendPath fPath "*.*")).count as string
+			file_count_cache.Add key count
+			count
+		)
+		fn readStringArray text =
+		(
+			local parsed = undefined
+			try (
+				local stream = text as StringStream
+				seek stream 0
+				parsed = readValue stream
+			) catch (
+				return undefined
+			)
+			if not (isKindOf parsed Array) then return undefined
+			local valid = true
+			for value in parsed do (
+				if not (isKindOf value String) then
+					valid = false
+				else if value == "" then
+					valid = false
+			)
+			if not valid then return undefined
+			parsed
+		)
+		fn extensionsMatch extensions allowed =
+		(
+			local found = false
+			for extension in extensions while not found do (
+				for candidate in allowed while not found do (
+					if extension == (toLower candidate) do found = true
+				)
+			)
+			found
 		)
 		-- Retrieve subdirectorries
 		fn GetAllSubDirs MyDirectory _filter:#("map*","texture*") =
 		(
-			local curr_folder =
-				if _filter != unsupplied then (
-					local temp = #()
-					for i in _filter do ( join temp (dotNetDirectory.GetDirectories MyDirectory i DirectorySearch) )
-					temp
-				) else ( dotNetDirectory.GetDirectories MyDirectory "*" DirectorySearch )
-			curr_folder
-			/*
-				local
-				temp = #(),
-				s = 1,
-				folders = getDirectories (MyDirectory + "/*"),
-				t = folders.count
-				while s < t do
-				(
-					for i = s to t do (
-						temp = getDirectories (folders[i]+"*")
-						-- apply filter
-						for j = 1 to temp.count do folders[folders.count+1] = temp[j]
-					)
-					s = t
-					t = folders.count
+			local curr_folder = dotNetDirectory.GetDirectories MyDirectory "*" DirectorySearch
+			if _filter == unsupplied then return curr_folder
+			local filtered = #()
+			for folder in curr_folder do (
+				local folder_name = (dotNetObject "System.IO.DirectoryInfo" folder).Name
+				local matches = false
+				for pattern in _filter do (
+					if matchPattern folder_name pattern ignoreCase:true do matches = true
 				)
-				sort folders
-				for i=1 to folders.count do (folders[i] = trimRight folders[i] "\\")
-				folders
-			--	*/
+				if matches do append filtered folder
+			)
+			filtered
 		)
 		-- image separators
 		fn dividerImage setColor: =
@@ -181,9 +229,12 @@
 		-- Re-apply style
 		fn lst_restyle =
 		(
+			local colorA = dotNetColor.Transparent
+			local colorB = dotNetColor.seashell
+			
 			local list_items = lst_mPath.Items
 			for f=0 to (list_items.count) - 1 do (
-				list_items.Item[f].BackColor = if (bit.get f 1) then dotNetColor.Transparent else dotNetColor.LightGray
+				list_items.Item[f].BackColor = if (bit.get f 1) then colorA else colorB
 			)
 		)
 		-- Add columns to listView
@@ -195,33 +246,49 @@
 		-- Add items to listView
 		fn lstV_addItem lst itmCol =
 		(
+			if itmCol == undefined or itmCol.count == 0 then return false
 			lst.BeginUpdate()
+			try (
 				lst.Items.AddRange itmCol
 				lst.AutoResizeColumns resizeToContent
 				lst.AutoResizeColumns resizeToHeader
 				lst_restyle()
+			) catch (
+				lst.EndUpdate()
+				messageBox ("Unable to update the fPath list. " + (getCurrentException() as string))
+				return false
+			)
 			lst.EndUpdate()
+			true
 		)
 		-- Process paths into ListView items
 		fn parse_items mP_list font: listView:lst_mPath =
 		(
 			local res_list = #()
+
 			if mP_list != undefined then (
-				local ForeColor, currpath, subitems
+				local currpath, subitems, exists
 				res_list =
 				for i=1 to mP_list.count collect (
 					currpath = mP_list[i]
+					exists = dotNetDirectory.exists currpath
+					
 					subitems = #()
-					subitems[5] = if (pathConfig.isAbsolutePath currpath) then "Absolute" else if (pathConfig.isUncPath currpath) then "UNC" else "-"
+					-- folder name
 					subitems[1] = pathConfig.stripPathToLeaf currpath
+					-- full path
 					subitems[2] = currpath
-					subitems[3] = (getFiles (pathConfig.appendPath currpath "*.*")).count as string
-					subitems[4] = if (dotNetDirectory.exists currpath) then (ForeColor = validPathColor; "OK") else (ForeColor = invalidPathColor;"MISSING")
+					-- file count
+					subitems[3] = pathFileCount currpath
+					-- status
+					subitems[4] = if exists then "OK" else "MISSING"
+					-- path type
+					subitems[5] = if (pathConfig.isAbsolutePath currpath) then "Absolute" else if (pathConfig.isUncPath currpath) then "UNC" else "-"
 					-- Initialize Item
 					local item = dotNetObject dotNetLstViewItemClass subitems
 					item.tag = currpath
-					item.ForeColor = ForeColor
-					item.BackColor = if (bit.get i 1) then dotNetColor.Transparent else dotNetColor.LightGray
+					item.ForeColor = if exists then validPathColor else invalidPathColor
+
 					if font != unsupplied then item.Font = (dotNetObject dotNetFont (listView.Font) font)
 					item
 				)
@@ -232,14 +299,21 @@
 		fn update_item the_item new_path =
 		(
 			local the_subitems = the_item.subitems
+			-- folder name
 			the_item.text = pathConfig.stripPathToLeaf new_path
-
+			the_item.tag = new_path
+			-- Note: Here we are updating the item, not creating a new one, so the indices are for the subitems in the existing ListView item
+			-- full path
 			the_subitems.item[1].text = new_path
-			the_subitems.item[2].text = (getFiles (pathConfig.appendPath new_path "*.*")).count as string
+			-- file count
+			the_subitems.item[2].text = pathFileCount new_path
+			-- path type
+			local path_exists = dotNetDirectory.exists new_path
 			the_subitems.item[4].text = if (pathConfig.isAbsolutePath new_path) then "Absolute" else if (pathConfig.isUncPath new_path) then "UNC" else "-"
+			-- status
 			the_subitems.item[3].text =
-			if (dotNetDirectory.exists new_path) then (
-				the_item.ForeColor = validpathColor
+			if path_exists then (
+				the_item.ForeColor = validPathColor
 				"OK"
 			) else (
 				the_item.ForeColor = invalidPathColor
@@ -255,24 +329,51 @@
 			-- Process paths into ListView items
 			lstV_addItem lst_mPath (parse_items TEMP_PATHS)
 		)
+		fn refreshList =
+		(
+			TEMP_PATHS = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
+			ADD_PATHS = #()
+			REMOVE_PATHS = #()
+			lst_mPath.Items.Clear()
+			local items = parse_items TEMP_PATHS
+			if btn_4.state then (
+				temp_listItemsCol = #()
+				local invalid_items = #()
+				for item in items do (
+					if item.SubItems.Item[3].Text == "OK" then
+						append temp_listItemsCol item
+					else
+						append invalid_items item
+				)
+				lstV_addItem lst_mPath invalid_items
+			) else (
+				lstV_addItem lst_mPath items
+			)
+		)
 		-----------------------------------------------------------------------------------------------
 		-- Commit changes to Paths
 		fn commit =
 		(
+			local result = true
 			if not (queryBox "Commit changes ?. This could take a while to process.") then return false
 			
-			-- remove any dupes
-			REMOVE_PATHS = makeUniqueArray REMOVE_PATHS
-			ADD_PATHS = makeUniqueArray ADD_PATHS
-			
-			-- remove possible delete entry from add entry..
-			ADD_PATHS = for i=1 to ADD_PATHS.count where (findItem REMOVE_PATHS ADD_PATHS[i] == 0) collect ADD_PATHS[i]
+			TEMP_PATHS = for i=1 to (mapPaths.count()) collect (mapPaths.get i)
+			local remove_lookup = makePathLookup REMOVE_PATHS
+			local add_lookup = makePathLookup #()
+			local unique_additions = #()
+			for fPath in ADD_PATHS do (
+				if not (pathIsKnown remove_lookup fPath) and not (pathIsKnown add_lookup fPath) do (
+					append unique_additions fPath
+					rememberPath add_lookup fPath
+				)
+			)
+			ADD_PATHS = unique_additions
 			
 			-- delete entry
 			format "Removing paths from External files list...\n"
 			try (
 				-- collect the indexes to be removed
-				local rem_idx = for p in REMOVE_PATHS collect findItem TEMP_PATHS p
+				local rem_idx = for p in REMOVE_PATHS collect findPathIndex TEMP_PATHS p
 				-- descending sort
 				qsort rem_idx invSort
 				-- remove the paths
@@ -280,44 +381,82 @@
 					mapPaths.delete i
 					format "->	%\n" TEMP_PATHS[i]
 				)			
-			) catch (messageBox "Unable to remove some paths."; format "%\n" (getCurrentException()) )
+			) catch (
+				messageBox "Unable to remove some paths."
+				format "%\n" (getCurrentException())
+				result = false
+			)
 			
-			-- add entry
-			-- /*
-			format "Adding paths to External files list...\n"
-			try (
-				--	progressStart "Adding user paths"
-				-- do not add duplicated entries
-				for p in ADD_PATHS where (findItem TEMP_PATHS p) == 0 do (
-					mapPaths.add p
-					format "->	%\n" p
+			if result then (
+				format "Adding paths to External files list...\n"
+				try (
+					local existing_lookup = makePathLookup TEMP_PATHS
+					for p in ADD_PATHS where not (pathIsKnown existing_lookup p) do (
+						mapPaths.add p
+						rememberPath existing_lookup p
+						format "->	%\n" p
+					)
+				) catch (
+					messageBox "Unable to add some paths."
+					format "%\n" (getCurrentException())
+					result = false
 				)
-			) catch (messageBox "unable to add some paths"; format "%\n" (getCurrentException()) )
-			-- */
-			-- update the tool
-			-- Init()
+			)
+			if result do refreshList()
+			result
 		)
 		-----------------------------------------------------------------------------------------------
 		-- open explorer
 		fn openDir =
 		(
 			local itms = lst_mPath.SelectedItems.Item
-			DOSCommand ("explorer " + "\"" + (itms[0].Subitems.Item[1].text) + "\"")
+			print (itms[0].Subitems.Item[1].text)
+			ShellLaunch (itms[0].Subitems.Item[1].text) ""
 		)
 		-- Add to list
 		fn path_adder paths =
 		(
 			local the_paths = deepcopy paths
-			local the_filter = if chk_sb.state then (execute txt_filter.text) else unsupplied
 			if (queryBox "Add subfolders too?") then (
+				local the_filter = unsupplied
+				if chk_sb.state then (
+					the_filter = readStringArray txt_filter.text
+					if the_filter == undefined then (
+						messageBox "The subdirectory filter must be an array of quoted strings."
+						return false
+					)
+				)
 				for the_path in paths do (
-					join the_paths (GetAllSubDirs the_path _filter:the_filter)
+					try (
+						join the_paths (GetAllSubDirs the_path _filter:the_filter)
+					) catch (
+						messageBox ("Unable to scan subdirectories. " + (getCurrentException() as string))
+						return false
+					)
 				)
 			)
-			-- add to temp results
-			join ADD_PATHS the_paths
-			-- add to list
-			lstV_addItem lst_mPath (parse_items the_paths font:font_Bold)
+			local known_paths = makePathLookup (TEMP_PATHS + ADD_PATHS)
+			local new_paths = #()
+			for fPath in the_paths where not (pathIsKnown known_paths fPath) do (
+				append new_paths fPath
+				rememberPath known_paths fPath
+			)
+			join ADD_PATHS new_paths
+			if new_paths.count > 0 do (
+				local new_items = parse_items new_paths font:font_Bold
+				if btn_4.state then (
+					local visible_items = #()
+					for item in new_items do (
+						if item.SubItems.Item[3].Text == "OK" then
+							append temp_listItemsCol item
+						else
+							append visible_items item
+					)
+					lstV_addItem lst_mPath visible_items
+				) else (
+					lstV_addItem lst_mPath new_items
+				)
+			)
 			silentValue
 		)
 		fn resize x y =
@@ -329,6 +468,7 @@
 			btn_8.pos = [btn_8.pos.x, y - 140]
 			btn_2.pos = [btn_2.pos.x, y - 140]
 			btn_4.pos = [btn_4.pos.x, y - 140]
+			btn_open.pos = [btn_open.pos.x, y - 140]
 			
 			chk_sb.pos = [chk_sb.pos.x, y - 115]
 			txt_filter.pos = [txt_filter.pos.x, y - 115]
@@ -343,7 +483,7 @@
 			txt_1.pos = [txt_1.pos.x, y - 77]
 			
 			sep2.pos = [sep2.pos.x, y - 41]
-			btn_open.pos = [btn_open.pos.x, y - 35]
+			
 			btn_5.pos = [btn_5.pos.x, y - 35]
 			btn_6.pos = [btn_6.pos.x, y - 35]
 		)
@@ -381,7 +521,7 @@
 			lst_mPath.Sorting = dotNetSort.Ascending
 			-----------------------------------------------------------------------
 			-- Add Columns
-			lstV_addColumns lst_mPath #("Folder name", "Full path", "Files", "Status", "Type") autosize:True
+			lstV_addColumns lst_mPath #("Folder name", "Full fPath", "Files", "Status", "Type") autosize:True
 			-- Add Items
 			Init()
 			--	lst_mPath.Items.Clear()
@@ -442,42 +582,22 @@
 					the_item.ForeColor = removedPathColor
 					appendIfUnique REMOVE_PATHS item_path
 				)
-				/*
-				local
-					save_color = the_item.ForeColor,
-					save_Font = the_item.Font
-
-				if f_d == 0 then (
-					the_item.Font = strikeout
-					the_item.ForeColor = removedPathColor
-					appendIfUnique REMOVE_PATHS item_path
-					
-				) else (
-					the_item.Font = save_Font
-					the_item.ForeColor = save_color
-					deleteItem REMOVE_PATHS f_d
-				)
-				*/
 			)
-			-- format "%\n" REMOVE_PATHS
 		)
 		-- paste paths string
-		on btn_8 pressed do (
+		on btn_8 pressed do
+		(
 			local roll = roll_PathEdit
 			createDialog roll modal:true
 			local response = roll.stored_values
-			-- print response
-			if isKindOf response Array do (
-				-- commit the paths
-				path_adder response
-			)
+			-- commit the paths
+			if isKindOf response Array do path_adder response
 		)
 		-- add entry
 		on btn_3 pressed do
 		(
 			folder_dialog.showDialog()
 			local the_path = folder_dialog.SelectedPath
-
 			if the_path != "" do path_adder #(the_path)
 		)
 		-- invalid paths filter
@@ -498,108 +618,94 @@
 		-- remove unwanted WIP
 		on btn_7 pressed do
 		(
-			local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
-			-- collect filenames
-			-- local proc_array = TEMP_PATHS + ADD_PATHS REPLACE TEMP PATHS
-			local origin_paths = deepcopy TEMP_PATHS
-			join origin_paths ADD_PATHS
-			
-			-- search for files in folders
-			local filenames =
-			for f=1 to origin_paths.count collect (
-				local temp = getfiles (origin_paths[f] + "\\*.*")
-				local ext = #()
-				if temp.count != 0 then (
-					ext = for i=1 to temp.count where (getFilenameType temp[i]) != ".db" collect (getFilenameType temp[i])
-				)
-				ext
-			)
-			-- marked will contain indexes
-			local marked = #()
-			-- dupes will contain paths
-			local dupes =  #()
-			-- empty folders
-			if chk_1.checked then (
-				local empty_folders = #()
-				empty_folders =  for a=1 to filenames.count where filenames[a].count == 0 collect a
-				join marked empty_folders
-			)
-			-- not images
-			if chk_2.checked then (
-				local not_images = #()
-				not_images = for b=1 to filenames.count collect (
-					local res = 0
-					local cnt = 1
-					do (
-						bsearch img_ext[cnt] filenames[b] extComparator index:&res
-						cnt += 1
-					) while ((cnt < img_ext.count) and (res == 0))
-					if res == 0 then b else continue
-				)
-				join marked not_images
-			)
-			-- not models
-			if chk_3.checked then (
-				local not_models = #()
-				not_models = for c=1 to filenames.count collect (
-					local res = 0
-					local cnt = 1
-					do (
-						bsearch md_ext[cnt] filenames[c] extComparator index:&res
-						cnt += 1
-					) while ((cnt < md_ext.count) and (res == 0))
-					if res == 0 then c else continue
-				)
-				join marked not_models
-			)
-			-- other
+			local custom_extensions = #()
+			local valid_custom_extensions = true
 			if chk_4.checked then (
-				local ext = execute txt_1.text
-				if isKindOf ext Array then (
-					local other_files = #()
-					other_files = for d=1 to filenames.count collect (
-						local res = 0
-						local cnt = 1
-						do (
-							bsearch ext[cnt] filenames[d] extComparator index:&res
-							cnt += 1
-						) while ((cnt < ext.count) and (res == 0))
-						if res == 0 then d else continue
+				custom_extensions = readStringArray txt_1.text
+				if custom_extensions == undefined or custom_extensions.count == 0 then
+					valid_custom_extensions = false
+			)
+			if not valid_custom_extensions then (
+				messageBox "Custom extensions must be a non-empty array of quoted strings."
+			) else (
+				try (
+					local strikeout = dotNetObject dotNetFont (lst_mPath.Font) font_strk
+					local origin_paths = deepcopy TEMP_PATHS
+					join origin_paths ADD_PATHS
+					local filenames = for fPath in origin_paths collect (
+						local extensions = #()
+						if dotNetDirectory.exists fPath then (
+							local files = getFiles (pathConfig.appendPath fPath "*.*")
+							extensions = for file in files where (toLower (getFilenameType file)) != ".db" collect (toLower (getFilenameType file))
+							extensions = makeUniqueArray extensions
+						)
+						extensions
 					)
-					join marked other_files
+					local marked = #()
+					if chk_1.checked do (
+						join marked (for i=1 to filenames.count where filenames[i].count == 0 collect i)
+					)
+					local keep_extensions = #()
+					if chk_2.checked do join keep_extensions img_ext
+					if chk_3.checked do join keep_extensions md_ext
+					if chk_4.checked do join keep_extensions custom_extensions
+					if keep_extensions.count > 0 do (
+						join marked (for i=1 to filenames.count where not (extensionsMatch filenames[i] keep_extensions) collect i)
+					)
+					local paths_lookup = makePathLookup #()
+					local paths_list = #()
+					for index in makeUniqueArray marked do (
+						local fPath = origin_paths[index]
+						if not (pathIsKnown paths_lookup fPath) do (
+							append paths_list fPath
+							rememberPath paths_lookup fPath
+						)
+					)
+					if chk_dupes.checked then (
+						local seen_paths = makePathLookup #()
+						for fPath in origin_paths do (
+							if pathIsKnown seen_paths fPath then (
+								if not (pathIsKnown paths_lookup fPath) do (
+									append paths_list fPath
+									rememberPath paths_lookup fPath
+								)
+							) else (
+								rememberPath seen_paths fPath
+							)
+						)
+					)
+					local items_by_path = dotNetObject "System.Collections.Hashtable"
+					for i=0 to lst_mPath.Items.Count-1 do (
+						local item = lst_mPath.Items.Item[i]
+						local key = pathKey (item.Tag as string)
+						if not (items_by_path.ContainsKey key) do items_by_path.Add key item
+					)
+					local remove_lookup = makePathLookup REMOVE_PATHS
+					for fPath in paths_list do (
+						local key = pathKey fPath
+						if items_by_path.ContainsKey key then (
+							local item = items_by_path.Item[key]
+							item.Font = strikeout
+							item.ForeColor = removedPathColor
+						)
+						if not (pathIsKnown remove_lookup fPath) do (
+							append REMOVE_PATHS fPath
+							rememberPath remove_lookup fPath
+						)
+					)
+				) catch (
+					messageBox ("Unable to clean the fPath list. " + (getCurrentException() as string))
 				)
 			)
-			-- duplicates
-			if chk_dupes.checked then (
-				local suspects = deepCopy origin_paths
-				sort suspects
-				-- format "suspects: %\n" suspects
-				dupes = for i=1 to (suspects.count - 1) where (suspects[i] == suspects[i+1]) collect suspects[i]
-			)
-			-- process list
-			-- get paths using collected indexes
-			local str = dotnetclass "system.string"
-
-			local temp_marked = makeUniqueArray marked
-			local paths_list = for g=1 to temp_marked.count collect origin_paths[temp_marked[g]]
-			-- add dupes
-			join paths_list dupes
-			-- find item in list, change item font
-			for i=1 to paths_list.count do (
-				local f_i = lst_mPath.FindItemWithText (dotNet.ValueToDotNetObject paths_list[i] str) true 0 false
-
-				if f_i != undefined then (
-					-- format "% || %\n" paths_list[i] f_i.Tag
-					f_i.Font = strikeout
-					f_i.ForeColor = removedPathColor
-				)
-			)
-			-- add to deletion array
-			join REMOVE_PATHS paths_list
 		)
 		-- accept
-		on btn_5 pressed do (commit(); DestroyDialog roll_mPath)
+		on btn_5 pressed do
+		(
+			if (commit()) do DestroyDialog roll_mPath
+		)
+		--close
 		on btn_6 pressed do (DestroyDialog roll_mPath)
+		-- explore selected
 		on btn_open pressed do (openDir())
 	)
 	CreateDialog roll_mPath lockWidth:true style:#(#style_titlebar, #style_border, #style_sysmenu, #style_resizing)
