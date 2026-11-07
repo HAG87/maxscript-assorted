@@ -30,6 +30,7 @@
 | vertex_scrambler           | Vertex scrambler       | Random shift vertex positions in a mesh.                                       |
 | vraymat_populate           |                        | Populate material editor slots with VRayMtl                                    |
 | xref_replace               | Replace with Xref      | Replace selected node with Xref Record.                                        |
+| dock_menu                  | Dock torn-off menu     | Dock a torn-off menu to the main UI                                            |
 
 ## MCG solutions
 
